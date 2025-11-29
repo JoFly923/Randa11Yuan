@@ -11,9 +11,9 @@ async function loadMarkdown(path){
   }
 }
 
-/* ---------- 视图切换（顶部菜单） ---------- */
+/* ---------- 视图切换（顶部标签共用） ---------- */
 const views = document.querySelectorAll('.view');
-const tabs = document.querySelectorAll('.nav-tab');
+const tabs  = document.querySelectorAll('.nav-tab');
 
 function switchView(name){
   tabs.forEach(t=>{
@@ -25,7 +25,7 @@ function switchView(name){
   });
   window.scrollTo({top:0,behavior:'smooth'});
 
-  // 小动画：新视图中的 section 平滑进场
+  // 新视图入场动画
   const activeView = document.getElementById(`view-${name}`);
   if(activeView){
     const firstSection = activeView.querySelector('.section-first') || activeView.querySelector('.section');
@@ -42,7 +42,7 @@ tabs.forEach(tab=>{
   tab.addEventListener('click', ()=> switchView(tab.dataset.view));
 });
 
-// hero 按钮也可以切换视图
+// hero 里的按钮直接切视图
 document.querySelectorAll('[data-switch]').forEach(btn=>{
   btn.addEventListener('click', ()=> switchView(btn.dataset.switch));
 });
@@ -70,7 +70,7 @@ function typeTick(){
   setTimeout(typeTick, forward?60:28);
 }
 
-/* ---------- 加载静态 sections (MD) ---------- */
+/* ---------- 加载静态 sections ---------- */
 async function loadStaticSections(){
   document.getElementById('about-md').innerHTML  =
     marked.parse(await loadMarkdown('projects/intro.md'));
@@ -83,16 +83,18 @@ async function loadStaticSections(){
 }
 loadStaticSections();
 
-/* ---------- Projects 列表 + Modal ---------- */
+/* ---------- Projects 列表 ---------- */
 async function loadProjects(){
   const raw = await loadMarkdown('projects/list.txt');
   const files = raw.split('\n').map(s=>s.trim()).filter(Boolean);
+
   const container = document.getElementById('project-list');
   container.innerHTML = '';
 
   files.forEach((f,i)=>{
     const name = f.replace('.md','').replace(/_/g,' ');
-    const idx = String(i+1).padStart(2,'0');
+    const idx  = String(i+1).padStart(2,'0');
+
     const card = document.createElement('article');
     card.className = 'project-card';
     card.innerHTML = `
@@ -115,24 +117,24 @@ async function loadProjects(){
 }
 loadProjects();
 
-/* ---------- Blog 列表 + Modal ---------- */
+/* ---------- Blog 列表 ---------- */
 /*
-  /blog/list.txt 每行格式建议为：
+  /blog/list.txt 每行：
   slug|Title|Tagline
-  例如：
-  first_post|Building my first biped robot|Robotics Dev Log
 */
 async function loadBlog(){
   const raw = await loadMarkdown('blog/list.txt');
   const lines = raw.split('\n').map(s=>s.trim()).filter(Boolean);
+
   const container = document.getElementById('blog-list');
   if(!container) return;
   container.innerHTML = '';
 
   for(const line of lines){
     const [slug,title,tagline] = line.split('|');
-    const safeSlug = slug.trim();
-    const t = (title || safeSlug).trim();
+    const safeSlug = (slug || '').trim();
+    if(!safeSlug) continue;
+    const t   = (title   || safeSlug).trim();
     const tag = (tagline || 'Update').trim();
 
     const item = document.createElement('article');
@@ -159,11 +161,12 @@ async function loadBlog(){
 loadBlog();
 
 /* ---------- 通用 Modal ---------- */
-const modal = document.getElementById('content-modal');
-const modalTag = document.getElementById('modal-tag');
+const modal     = document.getElementById('content-modal');
+const modalTag  = document.getElementById('modal-tag');
 const modalBody = document.getElementById('modal-md');
 
 async function openModal(tag, path){
+  if(!modal) return;
   modal.style.display = 'block';
   document.body.style.overflow = 'hidden';
   modalTag.textContent = tag;
@@ -176,12 +179,13 @@ async function openModal(tag, path){
   );
 }
 function closeModal(){
+  if(!modal) return;
   modal.style.display = 'none';
   document.body.style.overflow = '';
 }
 window.closeModal = closeModal;
 
-/* ---------- 背景粒子（简化版 伪 3D） ---------- */
+/* ---------- 背景粒子 ---------- */
 function initBackground(){
   const canvas = document.getElementById('bg-canvas');
   const ctx = canvas.getContext('2d');
@@ -223,7 +227,6 @@ function initBackground(){
 
       const size=2.1*p.z;
       const alpha=0.35+0.4*p.z;
-
       const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,size*3);
       g.addColorStop(0,`rgba(56,189,248,${alpha})`);
       g.addColorStop(1,'rgba(56,189,248,0)');
@@ -253,7 +256,50 @@ function initBackground(){
   tick();
 }
 
-/* ---------- Hero 入场动画 ---------- */
+/* ---------- Drawer Menu（PC + Mobile） ---------- */
+const menuBtn        = document.getElementById('menu-btn');
+const mobileMenu     = document.getElementById('mobile-menu');
+const mobileMenuInner= document.querySelector('.mobile-menu-inner');
+const menuClose      = document.getElementById('menu-close');
+
+function openDrawer(){
+  if(!mobileMenu || !mobileMenuInner) return;
+  mobileMenu.classList.add('open');
+
+  // 白色面板滑入
+  animate(mobileMenuInner,
+    { x:["-100%","0%"] },
+    { duration:0.35, easing:'ease-out' }
+  );
+
+  // 菜单项阶梯式滑入
+  animate('.mobile-menu-item',
+    { opacity:[0,1], x:[-16,0] },
+    { delay:stagger(0.06,{ start:0.10 }), duration:0.35, easing:'ease-out' }
+  );
+}
+function closeDrawer(){
+  if(!mobileMenu || !mobileMenuInner) return;
+  animate(mobileMenuInner,
+    { x:["0%","-100%"] },
+    { duration:0.28, easing:'ease-in' }
+  ).finished.then(()=>{
+    mobileMenu.classList.remove('open');
+  });
+}
+
+if(menuBtn)   menuBtn.addEventListener('click', openDrawer);
+if(menuClose) menuClose.addEventListener('click', closeDrawer);
+
+document.querySelectorAll('.mobile-menu-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    const view = item.dataset.view;
+    if(view) switchView(view);
+    closeDrawer();
+  });
+});
+
+/* ---------- Hero 入场 & 启动 ---------- */
 function heroIntro(){
   animate('.hero-card',
     { opacity:[0,1], y:[26,0], scale:[0.96,1] },
@@ -277,61 +323,8 @@ function heroIntro(){
   );
 }
 
-/* ---------- 启动 ---------- */
 window.addEventListener('load', ()=>{
   setTimeout(typeTick,400);
   heroIntro();
   initBackground();
 });
-
-/* ---------- Mobile / Desktop Drawer Menu Logic ---------- */
-const menuBtn = document.getElementById('menu-btn');
-const mobileMenu = document.getElementById('mobile-menu');
-const mobileMenuInner = document.querySelector('.mobile-menu-inner');
-const menuClose = document.getElementById('menu-close');
-
-function openDrawer(){
-  if(!mobileMenu || !mobileMenuInner) return;
-  mobileMenu.classList.add('open');
-
-  // 白色面板滑入
-  animate(mobileMenuInner,
-    { x:["-100%","0%"] },
-    { duration:0.35, easing:'ease-out' }
-  );
-
-  // 菜单项阶梯式滑入
-  animate('.mobile-menu-item',
-    { opacity:[0,1], x:[-16,0] },
-    { delay:stagger(0.06,{ start:0.10 }), duration:0.35, easing:'ease-out' }
-  );
-}
-
-function closeDrawer(){
-  if(!mobileMenu || !mobileMenuInner) return;
-
-  // 先把面板滑回去，再关 overlay
-  animate(mobileMenuInner,
-    { x:["0%","-100%"] },
-    { duration:0.28, easing:'ease-in' }
-  ).finished.then(()=>{
-    mobileMenu.classList.remove('open');
-  });
-}
-
-if(menuBtn){
-  menuBtn.addEventListener('click', openDrawer);
-}
-if(menuClose){
-  menuClose.addEventListener('click', closeDrawer);
-}
-
-// 点击菜单项：切换视图 + 关闭抽屉
-document.querySelectorAll('.mobile-menu-item').forEach(item=>{
-  item.addEventListener('click', ()=>{
-    const view = item.dataset.view;
-    if(view) switchView(view);
-    closeDrawer();
-  });
-});
-

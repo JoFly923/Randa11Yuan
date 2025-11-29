@@ -13,52 +13,49 @@
   <!-- 背景粒子 -->
   <canvas id="bg-canvas"></canvas>
 
-<!-- 顶部导航 + 视图菜单 -->
-<nav class="app-nav">
-  <div class="nav-left">
-    <span class="nav-logo-dot"></span>
-    <span class="nav-name">Yuan Wutong</span>
-    <span class="nav-pill">ROBOTICS & FLEXIBLE SENSORS</span>
-  </div>
+  <!-- 顶部导航 + 视图菜单 -->
+  <nav class="app-nav">
+    <div class="nav-left">
+      <span class="nav-logo-dot"></span>
+      <span class="nav-name">Yuan Wutong</span>
+      <span class="nav-pill">ROBOTICS & FLEXIBLE SENSORS</span>
+    </div>
 
-  <!-- PC 中间标签 -->
-  <div class="nav-center">
-    <div class="nav-tabs">
-      <button class="nav-tab active" data-view="overview">Overview</button>
-      <button class="nav-tab" data-view="projects">Projects</button>
-      <button class="nav-tab" data-view="blog">Blog</button>
-      <button class="nav-tab" data-view="research">Research</button>
+    <!-- PC 中间标签 -->
+    <div class="nav-center">
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-view="overview">Overview</button>
+        <button class="nav-tab" data-view="projects">Projects</button>
+        <button class="nav-tab" data-view="blog">Blog</button>
+        <button class="nav-tab" data-view="research">Research</button>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <button class="nav-lang">EN</button>
+
+      <!-- 菜单按钮：PC + Mobile 都可用 -->
+      <button id="menu-btn" class="menu-btn">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 抽屉菜单（PC + Mobile） -->
+  <div id="mobile-menu" class="mobile-menu">
+    <div class="mobile-menu-inner">
+      <button id="menu-close" class="menu-close">✕</button>
+
+      <button class="mobile-menu-item" data-view="overview">Overview</button>
+      <button class="mobile-menu-item" data-view="projects">Projects</button>
+      <button class="mobile-menu-item" data-view="blog">Blog</button>
+      <button class="mobile-menu-item" data-view="research">Research</button>
     </div>
   </div>
 
-  <div class="nav-right">
-    <button class="nav-lang">EN</button>
-
-    <!-- 移动端菜单按钮 -->
-    <button id="menu-btn" class="menu-btn">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
-
-<!-- 移动端抽屉菜单 -->
-<div id="mobile-menu" class="mobile-menu">
-  <div class="mobile-menu-inner">
-
-    <button id="menu-close" class="menu-close">✕</button>
-
-    <button class="mobile-menu-item" data-view="overview">Overview</button>
-    <button class="mobile-menu-item" data-view="projects">Projects</button>
-    <button class="mobile-menu-item" data-view="blog">Blog</button>
-    <button class="mobile-menu-item" data-view="research">Research</button>
-
-  </div>
-</div>
-
-
   <!-- 视图容器 -->
   <main class="view-shell">
-    <!-- View 1: Overview（Hero + About 精简版） -->
+    <!-- View 1: Overview -->
     <section id="view-overview" class="view active">
       <header class="hero" id="hero">
         <div class="hero-inner">
@@ -98,7 +95,7 @@
       </section>
     </section>
 
-    <!-- View 2: Projects 视图 -->
+    <!-- View 2: Projects -->
     <section id="view-projects" class="view">
       <section class="section section-first">
         <div class="section-header">
@@ -115,7 +112,7 @@
       </section>
     </section>
 
-    <!-- View 3: Blog 视图 -->
+    <!-- View 3: Blog -->
     <section id="view-blog" class="view">
       <section class="section section-first">
         <div class="section-header">
@@ -132,7 +129,7 @@
       </section>
     </section>
 
-    <!-- View 4: Research 视图（Papers + Awards + Future） -->
+    <!-- View 4: Research -->
     <section id="view-research" class="view">
       <section class="section section-first">
         <div class="section-header">
@@ -161,7 +158,7 @@
     </section>
   </main>
 
-  <!-- 项目 / 博客 通用 Modal -->
+  <!-- 通用 Modal（Projects + Blog） -->
   <div id="content-modal" class="modal" aria-hidden="true" style="display:none;">
     <div class="modal-backdrop" onclick="closeModal()"></div>
     <div class="modal-shell">

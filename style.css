@@ -60,7 +60,7 @@ body{
   color:#111827;
   box-shadow:0 8px 18px rgba(148,163,184,0.55);
 }
-.nav-right{display:flex;align-items:center}
+.nav-right{display:flex;align-items:center;gap:8px}
 .nav-lang{
   border-radius:999px;
   border:1px solid rgba(156,163,175,0.8);
@@ -70,17 +70,83 @@ body{
   cursor:pointer;
 }
 
+/* ---------- Menu Button (PC + Mobile) ---------- */
+.menu-btn{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  background:transparent;
+  border:0;
+  cursor:pointer;
+  padding:8px;
+}
+.menu-btn span{
+  width:22px;height:2px;
+  background:#111827;
+  border-radius:2px;
+}
+
+/* ---------- Drawer Menu (PC + Mobile) ---------- */
+.mobile-menu{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.20);
+  backdrop-filter:blur(4px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .22s ease-out;
+  z-index:2000;
+}
+.mobile-menu.open{
+  opacity:1;
+  pointer-events:auto;
+}
+/* 左侧白色面板，可滚动 */
+.mobile-menu-inner{
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:260px;
+  background:#ffffff;
+  box-shadow:
+    0 0 0 1px rgba(226,232,240,0.95),
+    0 28px 70px rgba(15,23,42,0.35);
+  padding:20px 18px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  transform:translateX(-100%);
+  overflow-y:auto;
+}
+.mobile-menu-item{
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid rgba(226,232,240,0.9);
+  background:#f9fafb;
+  font-size:14px;
+  text-align:left;
+  cursor:pointer;
+}
+.mobile-menu-item:hover{
+  background:#eef2ff;
+  border-color:#c7d2fe;
+}
+.menu-close{
+  border:0;
+  background:transparent;
+  color:#6b7280;
+  font-size:24px;
+  margin-bottom:10px;
+  cursor:pointer;
+  align-self:flex-end;
+}
+
 /* ---------- View shell ---------- */
 .view-shell{
   padding-top:76px;
   padding-bottom:40px;
 }
-.view{
-  display:none;
-}
-.view.active{
-  display:block;
-}
+.view{display:none;}
+.view.active{display:block;}
 
 /* ---------- Hero ---------- */
 .hero{
@@ -290,16 +356,10 @@ body{
   display:flex;justify-content:space-between;align-items:flex-start;
   gap:12px;
 }
-.blog-main{
-  flex:1;
-}
+.blog-main{flex:1;}
 .blog-title{font-size:15px;font-weight:600;margin-bottom:4px}
-.blog-meta{
-  font-size:12px;color:#9ca3af;margin-bottom:6px;
-}
-.blog-excerpt{
-  font-size:13px;color:#4b5563;
-}
+.blog-meta{font-size:12px;color:#9ca3af;margin-bottom:6px;}
+.blog-excerpt{font-size:13px;color:#4b5563;}
 .blog-tag{
   font-size:11px;
   padding:3px 8px;
@@ -350,9 +410,7 @@ body{
 
 /* ---------- Responsive ---------- */
 @media (max-width:900px){
-  .app-nav{padding:0 14px}
-  .nav-pill{display:none}
-  .nav-center{display:none}
+  .nav-center{display:none;}
   .view-shell{padding-top:70px}
   .hero-inner{
     grid-template-columns:1fr;
@@ -364,101 +422,4 @@ body{
   }
   .section-side-label{padding-top:0}
   .project-card{flex:0 0 240px}
-}
-
-/* ---------- Mobile Menu Button ---------- */
-.menu-btn{
-  display:none;
-  flex-direction:column;
-  gap:3px;
-  background:transparent;
-  border:0;
-  cursor:pointer;
-  padding:8px;
-}
-.menu-btn span{
-  width:22px;height:2px;
-  background:#111827;
-  border-radius:2px;
-}
-
-/* ---------- Drawer Menu (PC + Mobile) ---------- */
-.mobile-menu{
-  position:fixed;
-  inset:0;
-  background:rgba(15,23,42,0.18);
-  backdrop-filter:blur(4px);
-  opacity:0;
-  pointer-events:none;
-  z-index:2000;
-  transition:opacity .22s ease-out;
-}
-
-.mobile-menu.open{
-  opacity:1;
-  pointer-events:auto;
-}
-
-/* 左侧白色面板 */
-.mobile-menu-inner{
-  position:absolute;
-  left:0;top:0;bottom:0;
-  width:260px;
-  background:#ffffff;
-  box-shadow:
-    0 0 0 1px rgba(226,232,240,0.95),
-    0 28px 70px rgba(15,23,42,0.35);
-  padding:20px 18px;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-  transform:translateX(-100%);   /* 初始在屏幕外 */
-  overflow-y:auto;               /* ✅ 可以滚动 */
-}
-
-.mobile-menu-item{
-  padding:12px 14px;
-  border-radius:12px;
-  border:1px solid rgba(226,232,240,0.9);
-  background:#f9fafb;
-  font-size:14px;
-  text-align:left;
-  cursor:pointer;
-}
-.mobile-menu-item:hover{
-  background:#eef2ff;
-  border-color:#c7d2fe;
-}
-
-.menu-close{
-  border:0;
-  background:transparent;
-  color:#6b7280;
-  font-size:24px;
-  margin-bottom:10px;
-  cursor:pointer;
-  align-self:flex-end;
-}
-
-/* 手机端隐藏 nav-center（PC 仍然保留 tab） */
-@media (max-width:900px){
-  .nav-center{
-    display:none !important;
-  }
-}
-
-
-/* ---------- Mobile Only ---------- */
-@media (max-width:900px){
-  .nav-center{
-    display:none !important;
-  }
-.menu-btn{
-  display:flex;              /* ✅ 改：PC 也显示按钮 */
-  flex-direction:column;
-  gap:3px;
-  background:transparent;
-  border:0;
-  cursor:pointer;
-  padding:8px;
 }
