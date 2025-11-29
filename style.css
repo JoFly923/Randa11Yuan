@@ -227,6 +227,25 @@ body{
 .btn.ghost{
   background:#f9fafb;color:#111827;border-color:#e5e7eb;
 }
+
+/* Hero 联系方式 */
+.hero-contact{
+  margin-top:14px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.contact-chip{
+  font-size:12px;
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid rgba(209,213,219,0.9);
+  background:rgba(255,255,255,0.8);
+  color:#111827;
+  text-decoration:none;
+  box-shadow:0 8px 18px rgba(148,163,184,0.45);
+}
+
 .hero-right{display:flex;justify-content:flex-end}
 .hero-card{
   width:100%;max-width:292px;
@@ -421,6 +440,25 @@ body{
   max-width:380px;
   line-height:1.7;
 }
+
+/* GitHub 链接 */
+.project-card-flip-links{
+  margin-top:14px;
+}
+.project-gh-link{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  font-size:12px;
+  padding:5px 11px;
+  border-radius:999px;
+  border:1px solid rgba(59,130,246,0.45);
+  background:#eff6ff;
+  color:#1d4ed8;
+  text-decoration:none;
+}
+
+/* 翻页按钮 */
 .projects-flip-controls{
   margin-top:12px;
   display:flex;

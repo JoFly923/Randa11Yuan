@@ -7,7 +7,6 @@ import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@la
 let currentLang = 'zh'; // 默认中文
 const langBtn = document.querySelector('.nav-lang');
 
-// 固定文案的多语言字典
 const i18n = {
   zh: {
     navOverview: '概览',
@@ -19,21 +18,22 @@ const i18n = {
     heroBtnProjects: '查看项目',
     heroBtnBlog: '阅读博客',
     secAbout: '关于我',
-    labelProfile: '个人简介',
     secTimeline: '时间线',
-    labelJourney: '成长轨迹',
+    secAwards: '奖项',
     secProjects: '项目',
+    secBlog: '博客',
+    secResearch: '研究与规划',
+    labelProfile: '个人简介',
+    labelJourney: '成长轨迹',
+    labelAwards: '奖项',
     labelSelected: '代表作品',
+    labelStories: '记录',
+    labelPapers: '论文',
+    labelFuture: '未来计划', // 暂时不用
     projectsHint: '滚动或点击按钮翻页 · 浏览不同项目',
     btnPrev: '上一项',
     btnNext: '下一项',
-    secBlog: '博客',
-    labelStories: '记录',
     blogHint: '记录机器人、传感器与日常折腾。',
-    secResearch: '研究与规划',
-    labelPapers: '论文',
-    labelAwards: '奖项',
-    labelFuture: '未来计划',
   },
   en: {
     navOverview: 'Overview',
@@ -45,21 +45,22 @@ const i18n = {
     heroBtnProjects: 'View Projects',
     heroBtnBlog: 'Read Blog',
     secAbout: 'About',
-    labelProfile: 'Profile',
     secTimeline: 'Timeline',
-    labelJourney: 'Journey',
+    secAwards: 'Awards',
     secProjects: 'Projects',
+    secBlog: 'Blog',
+    secResearch: 'Research & Path',
+    labelProfile: 'Profile',
+    labelJourney: 'Journey',
+    labelAwards: 'Awards',
     labelSelected: 'Selected work',
+    labelStories: 'Stories',
+    labelPapers: 'Papers',
+    labelFuture: 'Future', // 暂时不用
     projectsHint: 'Scroll / click buttons to flip between projects.',
     btnPrev: 'Prev',
     btnNext: 'Next',
-    secBlog: 'Blog',
-    labelStories: 'Stories',
     blogHint: 'Writing about robots, sensors, and side projects.',
-    secResearch: 'Research & Path',
-    labelPapers: 'Papers',
-    labelAwards: 'Awards',
-    labelFuture: 'Future',
   }
 };
 
@@ -73,11 +74,7 @@ function hasChinese(text) {
   return /[\u4e00-\u9fff]/.test(text || '');
 }
 
-/**
- * 对 markdown 容器做中英拆分：
- * - 自动加 data-lang="zh" / "en"
- * - 如果同时有中英文：中文段落在上，英文在下
- */
+/* 把 markdown 容器拆成中/英段落 */
 function structureBilingual(container) {
   if (!container) return;
 
@@ -103,7 +100,7 @@ function structureBilingual(container) {
   }
 }
 
-/** 按容器粒度切语言：没有英文时 EN 也显示中文 */
+/* 按容器粒度切语言：没有英文时 EN 也显示中文 */
 function applyLanguageDom() {
   const containers = document.querySelectorAll('.md-body, #modal-md');
 
@@ -122,7 +119,7 @@ function applyLanguageDom() {
   });
 }
 
-/** 固定文案（导航、标题、按钮等）根据 currentLang 设置 */
+/* 固定文案多语言 */
 function applyStaticI18n() {
   const t = i18n[currentLang];
 
@@ -135,7 +132,7 @@ function applyStaticI18n() {
     navTabs[3].textContent = t.navResearch;
   }
 
-  // 抽屉菜单里的四个按钮
+  // 抽屉菜单
   const mobileItems = document.querySelectorAll('.mobile-menu-item');
   if (mobileItems.length >= 4) {
     mobileItems[0].textContent = t.navOverview;
@@ -147,7 +144,6 @@ function applyStaticI18n() {
   // Hero 文案
   const heroKicker = document.querySelector('.hero-kicker');
   if (heroKicker) heroKicker.textContent = t.heroKicker;
-
   const heroSub = document.querySelector('.hero-sub');
   if (heroSub) heroSub.textContent = t.heroSub;
 
@@ -157,29 +153,29 @@ function applyStaticI18n() {
     heroBtns[1].textContent = t.heroBtnBlog;
   }
 
-  // Section 标题
+  // Section 标题：About / Timeline / Awards / Projects / Blog / Research
   const titles = document.querySelectorAll('.section-title');
-  if (titles.length >= 5) {
+  if (titles.length >= 6) {
     titles[0].textContent = t.secAbout;
     titles[1].textContent = t.secTimeline;
-    titles[2].textContent = t.secProjects;
-    titles[3].textContent = t.secBlog;
-    titles[4].textContent = t.secResearch;
+    titles[2].textContent = t.secAwards;
+    titles[3].textContent = t.secProjects;
+    titles[4].textContent = t.secBlog;
+    titles[5].textContent = t.secResearch;
   }
 
-  // 左侧小标签
+  // 左侧小标签：Profile / Journey / Awards / Selected / Stories / Papers
   const labels = document.querySelectorAll('.section-side-label');
-  if (labels.length >= 7) {
+  if (labels.length >= 6) {
     labels[0].textContent = t.labelProfile;
     labels[1].textContent = t.labelJourney;
-    labels[2].textContent = t.labelSelected;
-    labels[3].textContent = t.labelStories;
-    labels[4].textContent = t.labelPapers;
-    labels[5].textContent = t.labelAwards;
-    labels[6].textContent = t.labelFuture;
+    labels[2].textContent = t.labelAwards;
+    labels[3].textContent = t.labelSelected;
+    labels[4].textContent = t.labelStories;
+    labels[5].textContent = t.labelPapers;
   }
 
-  // 提示文字 & 翻页按钮
+  // 提示 & 翻页按钮
   const projHint = document.querySelector('.projects-hint');
   if (projHint) projHint.textContent = t.projectsHint;
 
@@ -192,7 +188,7 @@ function applyStaticI18n() {
   if (nextBtn) nextBtn.textContent = t.btnNext;
 }
 
-/** 总的语言应用函数 */
+/* 总语言刷新 */
 function applyLanguage() {
   applyLanguageDom();
   applyStaticI18n();
@@ -201,7 +197,6 @@ function applyLanguage() {
   }
 }
 
-// 点击语言按钮切换：中文 <-> 英文
 if (langBtn) {
   langBtn.addEventListener('click', () => {
     currentLang = currentLang === 'zh' ? 'en' : 'zh';
@@ -241,7 +236,6 @@ function switchView(name){
 tabs.forEach(tab=>{
   tab.addEventListener('click', ()=> switchView(tab.dataset.view));
 });
-
 document.querySelectorAll('[data-switch]').forEach(btn=>{
   btn.addEventListener('click', ()=> switchView(btn.dataset.switch));
 });
@@ -286,7 +280,6 @@ async function loadStaticSections(){
   const aboutEl  = document.getElementById('about-md');
   const papersEl = document.getElementById('papers-md');
   const awardsEl = document.getElementById('awards-md');
-  const futureEl = document.getElementById('future-md');
 
   if (aboutEl) {
     aboutEl.innerHTML  = marked.parse(await loadMarkdown('projects/intro.md'));
@@ -300,20 +293,16 @@ async function loadStaticSections(){
     awardsEl.innerHTML = marked.parse(await loadMarkdown('projects/awards.md'));
     structureBilingual(awardsEl);
   }
-  if (futureEl) {
-    futureEl.innerHTML = marked.parse(await loadMarkdown('projects/future.md'));
-    structureBilingual(futureEl);
-  }
 
   applyLanguage();
 }
 loadStaticSections();
 
 /* =========================================================
-   项目数据 & 翻页机
+   项目数据 & 翻页机（带 GitHub 链接）
    ========================================================= */
 
-let projectData = [];   // { file, title, date, thumb, summaryZh, summaryEn, index }
+let projectData = [];   // { file, title, date, thumb, summaryZh, summaryEn, github, index }
 let currentProject = 0;
 
 const flipContainer = document.getElementById('project-flip');
@@ -344,6 +333,14 @@ function renderProjectCard(direction = 1){
        </div>`
     : '';
 
+  const ghHtml = data.github
+    ? `<div class="project-card-flip-links">
+         <a href="${data.github}" target="_blank" rel="noopener" class="project-gh-link">
+           GitHub ↗
+         </a>
+       </div>`
+    : '';
+
   const metaText = currentLang === 'en'
     ? `${data.date || ''} ${data.date ? '· ' : ''}Click to open · view details`
     : `${data.date || ''} ${data.date ? '· ' : ''}点击打开 · 查看详情`;
@@ -363,6 +360,7 @@ function renderProjectCard(direction = 1){
       ${imgHtml}
       <div class="project-card-flip-text">
         ${summary}
+        ${ghHtml}
       </div>
     </div>
   `;
@@ -478,6 +476,7 @@ async function loadProjects(){
     const thumb = parts[3] || '';
     const summaryZh = parts[4] || '';
     const summaryEn = parts[5] || '';
+    const github    = parts[6] || '';
 
     return {
       file,
@@ -486,6 +485,7 @@ async function loadProjects(){
       thumb,
       summaryZh,
       summaryEn,
+      github,
       index: i
     };
   });
@@ -494,7 +494,7 @@ async function loadProjects(){
     initProjectFlip();
     buildTimeline();
   }
-  applyLanguage(); // 同步一次文案
+  applyLanguage();
 }
 loadProjects();
 
@@ -502,9 +502,7 @@ loadProjects();
    Blog 列表
    ========================================================= */
 
-/*
-  /blog/list.txt 每行： slug|Title|Tagline
-*/
+/* /blog/list.txt: slug|Title|Tagline */
 async function loadBlog(){
   const raw = await loadMarkdown('blog/list.txt');
   const lines = raw.split('\n').map(s=>s.trim()).filter(Boolean);

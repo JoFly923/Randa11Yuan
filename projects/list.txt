@@ -1,3 +1,4 @@
-biped_robot.md|Biped robot|2023-05|static/assets/img/biped_cad.png|一个基于伺服驱动的双足机器人实验平台，主要用于步态与平衡控制研究。|A servo-driven biped robot platform for walking and balance control experiments.
-flex_sensor.md|Flexible sensor exp.|2024-03|static/assets/img/biped_cad.png|柔性压力/弯曲传感器实验，用于可穿戴设备和软体机器人。|Experiments with flexible pressure/bending sensors for wearables and soft robots.
-intro.md|Portfolio intro|2024-11|||        # 后面空着也没关系
+biped_robot.md|Biped robot|2023-05|static/assets/imgbiped_cad.png|一个基于伺服驱动的双足机器人实验平台，用于步态与平衡控制研究。|A servo-driven biped robot platform for walking and balance control experiments.|https://github.com/JoFly923/Randa11Yuan
+flex_sensor.md|Flexible sensor exp.|2024-03|static/assets/img/biped_cad.png|柔性压力/弯曲传感器实验，用于可穿戴设备和软体机器人。|Experiments with flexible pressure/bending sensors for wearables and soft robots.|https://github.com/JoFly923/Randa11Yuan
+intro.md|Portfolio intro|2024-11|||Some notes about this portfolio site.|
+
