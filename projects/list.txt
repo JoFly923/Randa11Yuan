@@ -1,2 +1,3 @@
-biped_robot.md
-flex_sensor.md
+biped_robot
+flex_sensor
+intro
