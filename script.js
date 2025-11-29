@@ -1,17 +1,199 @@
 import { animate, inView, stagger } from "https://cdn.jsdelivr.net/npm/motion@latest/+esm";
 
-/* ---------- 工具：加载 Markdown ---------- */
-async function loadMarkdown(path){
-  try{
-    const r = await fetch(path);
-    if(!r.ok) throw new Error('not found');
-    return await r.text();
-  }catch(e){
-    return `# The page could not be found\nNOT_FOUND\n${e.message}`;
+/* =========================================================
+   多语言系统（默认中文）
+   ========================================================= */
+
+let currentLang = 'zh'; // 默认中文
+const langBtn = document.querySelector('.nav-lang');
+
+// 固定文案的多语言字典
+const i18n = {
+  zh: {
+    navOverview: '概览',
+    navProjects: '项目',
+    navBlog: '博客',
+    navResearch: '研究',
+    heroKicker: '机器人 · 嵌入式 · 柔性传感',
+    heroSub: '专注于安静、高精度的机器人与智能柔性传感织物。',
+    heroBtnProjects: '查看项目',
+    heroBtnBlog: '阅读博客',
+    secAbout: '关于我',
+    labelProfile: '个人简介',
+    secTimeline: '时间线',
+    labelJourney: '成长轨迹',
+    secProjects: '项目',
+    labelSelected: '代表作品',
+    projectsHint: '滚动或点击按钮翻页 · 浏览不同项目',
+    btnPrev: '上一项',
+    btnNext: '下一项',
+    secBlog: '博客',
+    labelStories: '记录',
+    blogHint: '记录机器人、传感器与日常折腾。',
+    secResearch: '研究与规划',
+    labelPapers: '论文',
+    labelAwards: '奖项',
+    labelFuture: '未来计划',
+  },
+  en: {
+    navOverview: 'Overview',
+    navProjects: 'Projects',
+    navBlog: 'Blog',
+    navResearch: 'Research',
+    heroKicker: 'ROBOTICS · EMBEDDED · FLEXIBLE SENSORS',
+    heroSub: 'Building quiet, precise robots and intelligent sensing fabrics.',
+    heroBtnProjects: 'View Projects',
+    heroBtnBlog: 'Read Blog',
+    secAbout: 'About',
+    labelProfile: 'Profile',
+    secTimeline: 'Timeline',
+    labelJourney: 'Journey',
+    secProjects: 'Projects',
+    labelSelected: 'Selected work',
+    projectsHint: 'Scroll / click buttons to flip between projects.',
+    btnPrev: 'Prev',
+    btnNext: 'Next',
+    secBlog: 'Blog',
+    labelStories: 'Stories',
+    blogHint: 'Writing about robots, sensors, and side projects.',
+    secResearch: 'Research & Path',
+    labelPapers: 'Papers',
+    labelAwards: 'Awards',
+    labelFuture: 'Future',
+  }
+};
+
+// Hero 打字机两套文案
+const typePhrases = {
+  zh: ['袁梧桐', '机器人开发者', '嵌入式控制工程', '柔性传感探索者'],
+  en: ['Yuan Wutong', 'Robotics Developer', 'Embedded Control Engineer', 'Flexible Sensor Explorer'],
+};
+
+function hasChinese(text) {
+  return /[\u4e00-\u9fff]/.test(text || '');
+}
+
+/**
+ * 对 markdown 容器做中英拆分：
+ * - 自动加 data-lang="zh" / "en"
+ * - 如果同时有中英文：中文段落在上，英文在下
+ */
+function structureBilingual(container) {
+  if (!container) return;
+
+  const children = Array.from(container.children);
+  const zhNodes = [];
+  const enNodes = [];
+
+  children.forEach(el => {
+    if (el.nodeType !== 1) return;
+    const text = el.textContent || '';
+    if (hasChinese(text)) {
+      el.dataset.lang = 'zh';
+      zhNodes.push(el);
+    } else {
+      el.dataset.lang = 'en';
+      enNodes.push(el);
+    }
+  });
+
+  if (zhNodes.length && enNodes.length) {
+    container.innerHTML = '';
+    [...zhNodes, ...enNodes].forEach(el => container.appendChild(el));
   }
 }
 
-/* ---------- 视图切换 ---------- */
+/** 只对带 data-lang 的元素做显示/隐藏 */
+function applyLanguageDom() {
+  const zhEls = document.querySelectorAll('[data-lang="zh"]');
+  const enEls = document.querySelectorAll('[data-lang="en"]');
+
+  if (currentLang === 'en') {
+    zhEls.forEach(el => (el.style.display = 'none'));
+    enEls.forEach(el => (el.style.display = ''));
+  } else {
+    zhEls.forEach(el => (el.style.display = ''));
+    enEls.forEach(el => (el.style.display = ''));
+  }
+}
+
+/** 固定文案（导航、标题、按钮等）根据 currentLang 设置 */
+function applyStaticI18n() {
+  const t = i18n[currentLang];
+
+  const navTabs = document.querySelectorAll('.nav-tab');
+  if (navTabs.length >= 4) {
+    navTabs[0].textContent = t.navOverview;
+    navTabs[1].textContent = t.navProjects;
+    navTabs[2].textContent = t.navBlog;
+    navTabs[3].textContent = t.navResearch;
+  }
+
+  const heroKicker = document.querySelector('.hero-kicker');
+  if (heroKicker) heroKicker.textContent = t.heroKicker;
+
+  const heroSub = document.querySelector('.hero-sub');
+  if (heroSub) heroSub.textContent = t.heroSub;
+
+  const heroBtns = document.querySelectorAll('.hero-actions .btn');
+  if (heroBtns.length >= 2) {
+    heroBtns[0].textContent = t.heroBtnProjects;
+    heroBtns[1].textContent = t.heroBtnBlog;
+  }
+
+  const titles = document.querySelectorAll('.section-title');
+  if (titles.length >= 5) {
+    titles[0].textContent = t.secAbout;
+    titles[1].textContent = t.secTimeline;
+    titles[2].textContent = t.secProjects;
+    titles[3].textContent = t.secBlog;
+    titles[4].textContent = t.secResearch;
+  }
+
+  const labels = document.querySelectorAll('.section-side-label');
+  if (labels.length >= 7) {
+    labels[0].textContent = t.labelProfile;
+    labels[1].textContent = t.labelJourney;
+    labels[2].textContent = t.labelSelected;
+    labels[3].textContent = t.labelStories;
+    labels[4].textContent = t.labelPapers;
+    labels[5].textContent = t.labelAwards;
+    labels[6].textContent = t.labelFuture;
+  }
+
+  const projHint = document.querySelector('.projects-hint');
+  if (projHint) projHint.textContent = t.projectsHint;
+
+  const blogHint = document.querySelector('.blog-hint');
+  if (blogHint) blogHint.textContent = t.blogHint;
+
+  const prevBtn = document.getElementById('prev-project');
+  const nextBtn = document.getElementById('next-project');
+  if (prevBtn) prevBtn.textContent = t.btnPrev;
+  if (nextBtn) nextBtn.textContent = t.btnNext;
+}
+
+/** 总的语言应用函数 */
+function applyLanguage() {
+  applyLanguageDom();
+  applyStaticI18n();
+  if (langBtn) {
+    langBtn.textContent = currentLang === 'en' ? 'EN' : '中';
+  }
+}
+
+// 点击语言按钮切换：中文 <-> 英文
+if (langBtn) {
+  langBtn.addEventListener('click', () => {
+    currentLang = currentLang === 'zh' ? 'en' : 'zh';
+    applyLanguage();
+  });
+}
+
+/* =========================================================
+   视图切换
+   ========================================================= */
+
 const views = document.querySelectorAll('.view');
 const tabs  = document.querySelectorAll('.nav-tab');
 
@@ -45,69 +227,76 @@ document.querySelectorAll('[data-switch]').forEach(btn=>{
   btn.addEventListener('click', ()=> switchView(btn.dataset.switch));
 });
 
-/* ---------- Hero 打字机 ---------- */
-const phrases = [
-  "Yuan Wutong",
-  "Robotics Developer",
-  "Embedded Control Engineer",
-  "Flexible Sensor Explorer"
-];
+/* =========================================================
+   Hero 打字机
+   ========================================================= */
+
 let twIdx = 0, chIdx = 0, forward = true;
 const twElem = document.getElementById('typewriter');
 
 function typeTick(){
-  const p = phrases[twIdx];
+  const list = typePhrases[currentLang] || typePhrases.en;
+  const p = list[twIdx % list.length];
+
   if(forward){
     chIdx++;
     if(chIdx>p.length){ forward=false; setTimeout(typeTick,900); return; }
   }else{
     chIdx--;
-    if(chIdx<0){ forward=true; twIdx=(twIdx+1)%phrases.length; setTimeout(typeTick,220); return; }
+    if(chIdx<0){ forward=true; twIdx=(twIdx+1)%list.length; setTimeout(typeTick,220); return; }
   }
-  twElem.textContent = p.slice(0,chIdx);
+  if(twElem) twElem.textContent = p.slice(0,chIdx);
   setTimeout(typeTick, forward?60:28);
 }
 
-/* ---------- 加载静态 sections ---------- */
+/* =========================================================
+   加载静态 sections（About / Papers / Awards / Future）
+   ========================================================= */
+
+async function loadMarkdown(path){
+  try{
+    const r = await fetch(path);
+    if(!r.ok) throw new Error('not found');
+    return await r.text();
+  }catch(e){
+    return `# The page could not be found\nNOT_FOUND\n${e.message}`;
+  }
+}
+
 async function loadStaticSections(){
-  document.getElementById('about-md').innerHTML  =
-    marked.parse(await loadMarkdown('projects/intro.md'));
-  document.getElementById('papers-md').innerHTML =
-    marked.parse(await loadMarkdown('projects/papers.md'));
-  document.getElementById('awards-md').innerHTML =
-    marked.parse(await loadMarkdown('projects/awards.md'));
-  document.getElementById('future-md').innerHTML =
-    marked.parse(await loadMarkdown('projects/future.md'));
+  const aboutEl  = document.getElementById('about-md');
+  const papersEl = document.getElementById('papers-md');
+  const awardsEl = document.getElementById('awards-md');
+  const futureEl = document.getElementById('future-md');
+
+  if (aboutEl) {
+    aboutEl.innerHTML  = marked.parse(await loadMarkdown('projects/intro.md'));
+    structureBilingual(aboutEl);
+  }
+  if (papersEl) {
+    papersEl.innerHTML = marked.parse(await loadMarkdown('projects/papers.md'));
+    structureBilingual(papersEl);
+  }
+  if (awardsEl) {
+    awardsEl.innerHTML = marked.parse(await loadMarkdown('projects/awards.md'));
+    structureBilingual(awardsEl);
+  }
+  if (futureEl) {
+    futureEl.innerHTML = marked.parse(await loadMarkdown('projects/future.md'));
+    structureBilingual(futureEl);
+  }
+
+  applyLanguage(); // 初始按当前语言应用
 }
 loadStaticSections();
 
-/* ---------- 全局项目数据 ---------- */
+/* =========================================================
+   项目数据 & 翻页机
+   ========================================================= */
+
 let projectData = [];   // { file, title, date, index }
 let currentProject = 0;
 
-/* ---------- Projects: 读取 list + 初始化 ---------- */
-async function loadProjects(){
-  const raw = await loadMarkdown('projects/list.txt');
-  const lines = raw.split('\n').map(s=>s.trim()).filter(Boolean);
-
-  projectData = lines.map((line, i)=>{
-    const parts = line.split('|').map(p=>p.trim());
-    const file  = parts[0];
-    const base  = file.replace('.md','').replace(/_/g,' ');
-    return {
-      file,
-      title: parts[1] || base,
-      date:  parts[2] || '',
-      index: i
-    };
-  });
-
-  initProjectFlip();
-  buildTimeline();
-}
-loadProjects();
-
-/* ---------- Projects: 翻页机 ---------- */
 const flipContainer = document.getElementById('project-flip');
 const prevBtn = document.getElementById('prev-project');
 const nextBtn = document.getElementById('next-project');
@@ -130,20 +319,20 @@ function renderProjectCard(direction = 1){
       <div>
         <div class="project-card-flip-title">${data.title}</div>
         <div class="project-card-flip-meta">
-          ${data.date ? data.date + " · " : ""}Click to open · 查看详情
+          ${data.date ? data.date + " · " : ""}${currentLang === 'en' ? 'Click to open · view details' : '点击打开 · 查看详情'}
         </div>
       </div>
       <div class="project-card-flip-index">${String(data.index+1).padStart(2,'0')}</div>
     </div>
     <div class="project-card-flip-body">
-      This is a summary card for <strong>${data.title}</strong>.  
-      Click to see full details, images, and videos.
+      ${currentLang === 'en'
+        ? `This is a summary card for <strong>${data.title}</strong>. Click to see full details, images, and videos.`
+        : `这里是 <strong>${data.title}</strong> 的概要卡片，点击可查看完整介绍、图片和视频。`}
     </div>
   `;
   card.addEventListener('click', ()=> openModal('Project', 'projects/'+data.file));
   flipContainer.appendChild(card);
 
-  // 新卡片进场动画（翻页风格）
   const fromY = direction > 0 ? 40 : -40;
   animate(card,
     { opacity:[0,1], y:[fromY,0] },
@@ -180,7 +369,6 @@ function initProjectFlip(){
     };
   }
 
-  // 滚轮翻页（防止滚太快加锁）
   let wheelLocked = false;
   if(flipContainer){
     flipContainer.addEventListener('wheel', e=>{
@@ -201,7 +389,7 @@ function initProjectFlip(){
   updateCounter();
 }
 
-/* 供时间线调用：按照文件名跳转到某个项目 */
+/* 供时间线跳转用 */
 function jumpToProjectByFile(file){
   const idx = projectData.findIndex(p=>p.file === file);
   if(idx === -1) return;
@@ -210,7 +398,8 @@ function jumpToProjectByFile(file){
   renderProjectCard(1);
 }
 
-/* ---------- 时间线 ---------- */
+/* ---------- 加载项目列表 & 时间线 ---------- */
+
 const timelineEl = document.getElementById('timeline');
 
 function buildTimeline(){
@@ -223,7 +412,7 @@ function buildTimeline(){
       <div class="timeline-dot"></div>
       <div class="timeline-content">
         <div class="timeline-title">${p.title}</div>
-        <div class="timeline-meta">${p.date || 'Project'}</div>
+        <div class="timeline-meta">${p.date || (currentLang === 'en' ? 'Project' : '项目')}</div>
       </div>
     `;
     item.addEventListener('click', ()=> jumpToProjectByFile(p.file));
@@ -238,7 +427,32 @@ function buildTimeline(){
   }, { amount:0.5 });
 }
 
-/* ---------- Blog ---------- */
+async function loadProjects(){
+  const raw = await loadMarkdown('projects/list.txt');
+  const lines = raw.split('\n').map(s=>s.trim()).filter(Boolean);
+
+  projectData = lines.map((line, i)=>{
+    const parts = line.split('|').map(p=>p.trim());
+    const file  = parts[0];
+    const base  = file.replace('.md','').replace(/_/g,' ');
+    return {
+      file,
+      title: parts[1] || base,
+      date:  parts[2] || '',
+      index: i
+    };
+  });
+
+  initProjectFlip();
+  buildTimeline();
+  applyLanguage(); // 再同步一次文案
+}
+loadProjects();
+
+/* =========================================================
+   Blog 列表
+   ========================================================= */
+
 /*
   /blog/list.txt 每行： slug|Title|Tagline
 */
@@ -254,7 +468,7 @@ async function loadBlog(){
     const safeSlug = (slug || '').trim();
     if(!safeSlug) continue;
     const t   = (title   || safeSlug).trim();
-    const tag = (tagline || 'Update').trim();
+    const tag = (tagline || (currentLang === 'en' ? 'Update' : '更新')).trim();
 
     const item = document.createElement('article');
     item.className = 'blog-item';
@@ -262,7 +476,9 @@ async function loadBlog(){
       <div class="blog-main">
         <div class="blog-title">${t}</div>
         <div class="blog-meta">${tag}</div>
-        <div class="blog-excerpt">Click to read · 点击查看全文</div>
+        <div class="blog-excerpt">${currentLang === 'en'
+          ? 'Click to read · view full post'
+          : '点击查看 · 阅读完整文章'}</div>
       </div>
       <span class="blog-tag">Blog</span>
     `;
@@ -279,7 +495,10 @@ async function loadBlog(){
 }
 loadBlog();
 
-/* ---------- 通用 Modal ---------- */
+/* =========================================================
+   Modal（项目 + 博客详情）
+   ========================================================= */
+
 const modal     = document.getElementById('content-modal');
 const modalTag  = document.getElementById('modal-tag');
 const modalBody = document.getElementById('modal-md');
@@ -288,9 +507,20 @@ async function openModal(tag, path){
   if(!modal) return;
   modal.style.display = 'block';
   document.body.style.overflow = 'hidden';
-  modalTag.textContent = tag;
+
+  // 标签文字跟语言
+  if(tag === 'Project'){
+    modalTag.textContent = currentLang === 'en' ? 'Project' : '项目';
+  }else if(tag === 'Blog'){
+    modalTag.textContent = currentLang === 'en' ? 'Blog' : '博客';
+  }else{
+    modalTag.textContent = currentLang === 'en' ? 'Detail' : '详情';
+  }
+
   const md = await loadMarkdown(path);
   modalBody.innerHTML = marked.parse(md);
+  structureBilingual(modalBody);
+  applyLanguageDom(); // 只需要切显示/隐藏，固定文案已由 applyLanguage 控制
 
   animate('.modal-card',
     { opacity:[0,1], y:[28,0] },
@@ -304,7 +534,10 @@ function closeModal(){
 }
 window.closeModal = closeModal;
 
-/* ---------- 背景粒子 ---------- */
+/* =========================================================
+   背景粒子
+   ========================================================= */
+
 function initBackground(){
   const canvas = document.getElementById('bg-canvas');
   const ctx = canvas.getContext('2d');
@@ -375,7 +608,10 @@ function initBackground(){
   tick();
 }
 
-/* ---------- Drawer Menu（PC + Mobile） ---------- */
+/* =========================================================
+   抽屉菜单（PC + Mobile）
+   ========================================================= */
+
 const menuBtn        = document.getElementById('menu-btn');
 const mobileMenu     = document.getElementById('mobile-menu');
 const mobileMenuInner= document.querySelector('.mobile-menu-inner');
@@ -385,13 +621,11 @@ function openDrawer(){
   if(!mobileMenu || !mobileMenuInner) return;
   mobileMenu.classList.add('open');
 
-  // 面板滑入
   animate(mobileMenuInner,
     { x:["-100%","0%"] },
     { duration:0.45, easing:"cubic-bezier(.16,1.4,.3,1)" }
   );
 
-  // 菜单项弹簧式出现
   const items = document.querySelectorAll('.mobile-menu-item');
   items.forEach((item, i)=>{
     animate(item,
@@ -425,7 +659,10 @@ document.querySelectorAll('.mobile-menu-item').forEach(item=>{
   });
 });
 
-/* ---------- Hero 入场 & 启动 ---------- */
+/* =========================================================
+   启动
+   ========================================================= */
+
 function heroIntro(){
   animate('.hero-card',
     { opacity:[0,1], y:[26,0], scale:[0.96,1] },
@@ -450,6 +687,7 @@ function heroIntro(){
 }
 
 window.addEventListener('load', ()=>{
+  applyLanguage();          // 默认中文
   setTimeout(typeTick,400);
   heroIntro();
   initBackground();
