@@ -1,111 +1,233 @@
-/* === Global === */
+/* ============= Global Reset ============= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
 }
 
 body {
-    background: radial-gradient(circle at center, #f0f4ff, #dfe6f3);
-    color: #222;
+    background: #f5f5f7;
+    color: #111;
+    overflow-x: hidden;
     padding-top: 80px;
 }
 
-/* === Glass Navigation Bar === */
+/* ============= Glass Navigation Bar ============= */
 .glass-nav {
     position: fixed;
     top: 0;
     width: 100%;
-    backdrop-filter: blur(18px) saturate(150%);
-    background: rgba(255, 255, 255, 0.35);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 4px 30px rgba(0,0,0,0.1);
-    padding: 15px 40px;
+    height: 70px;
+    backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    z-index: 1000;
+    padding: 0 35px;
+    z-index: 100;
 }
 
-.nav-right button {
-    margin-left: 10px;
-    padding: 6px 12px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
+.nav-left {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.lang-btn {
     background: rgba(255,255,255,0.6);
-    backdrop-filter: blur(10px);
+    border: none;
+    margin-left: 8px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
     transition: 0.2s;
 }
 
-.nav-right button:hover {
+.lang-btn:hover {
     background: rgba(255,255,255,0.9);
 }
 
-/* === Hero Intro === */
+/* ============= Hero Section ============= */
 .hero {
-    text-align: center;
-    margin-top: 50px;
-    padding: 40px;
+    width: 100%;
+    padding: 80px 0;
+    display: flex;
+    justify-content: center;
 }
 
-.hero h1 {
+.hero-inner {
+    max-width: 1200px;
+    width: 90%;
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    animation: fadeInUp 1s ease forwards;
+    opacity: 0;
+}
+
+.hero-left img {
+    width: 220px;
+    height: 220px;
+    border-radius: 28px;
+    object-fit: cover;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.hero-right h1 {
     font-size: 42px;
-    margin-bottom: 20px;
-    animation: fadeInUp 1s ease-out;
+    font-weight: 700;
 }
 
-.hero p {
-    max-width: 700px;
-    margin: auto;
+.hero-right p {
+    margin-top: 12px;
     font-size: 18px;
     line-height: 1.6;
-    animation: fadeInUp 1.5s ease-out;
 }
 
-/* === Projects Section === */
+.hero-meta {
+    margin-top: 12px;
+    font-size: 15px;
+    opacity: 0.8;
+}
+
+.hero-meta span {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.hero-actions {
+    margin-top: 18px;
+}
+
+.btn {
+    padding: 10px 20px;
+    background: black;
+    color: white;
+    border-radius: 12px;
+    font-size: 15px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    transform: translateY(-4px);
+    background: #333;
+}
+
+/* ============= Sections ============= */
+.section {
+    width: 100%;
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+}
+
 .section-title {
-    text-align: center;
-    font-size: 32px;
-    margin-top: 40px;
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    text-align: left;
 }
 
+/* Vision Pro 卡片 风格 */
+.card {
+    width: 90%;
+    max-width: 1000px;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(30px) saturate(180%);
+    border-radius: 24px;
+    padding: 30px;
+    margin-bottom: 40px;
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.08),
+        0 0 40px rgba(255,255,255,0.4) inset;
+    animation: fadeInUp 1s ease forwards;
+    opacity: 0;
+}
+
+/* Markdown body */
+.md-body {
+    line-height: 1.7;
+    font-size: 17px;
+}
+
+.md-body img {
+    max-width: 100%;
+    border-radius: 12px;
+    margin: 15px 0;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* ============= Project Cards ============= */
 .project-list {
-    max-width: 900px;
-    margin: 20px auto;
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
     display: grid;
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 25px;
 }
 
 .project-card {
+    padding: 22px;
     background: rgba(255,255,255,0.55);
-    border-radius: 18px;
-    padding: 20px;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 10px 35px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(25px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     cursor: pointer;
     transition: 0.25s;
-    animation: fadeInUp 0.8s ease-out;
 }
 
 .project-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+    transform: translateY(-6px);
+    background: rgba(255,255,255,0.75);
 }
 
-.project-title {
-    font-size: 22px;
-    margin-bottom: 10px;
+/* ============= Modal ============= */
+.modal {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* === Animations === */
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 820px;
+    max-height: 85%;
+    overflow-y: auto;
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    border: none;
+    background: transparent;
+    font-size: 25px;
+    cursor: pointer;
+    color: #333;
+}
+
+/* ============= Animations ============= */
 @keyframes fadeInUp {
     from {
-        opacity: 0; 
-        transform: translateY(20px);
+        transform: translateY(25px);
+        opacity: 0;
     }
     to {
-        opacity: 1; 
         transform: translateY(0);
+        opacity: 1;
     }
 }

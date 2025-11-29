@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Randall Yuan – Portfolio</title>
     <link rel="stylesheet" href="style.css">
+
+    <!-- markdown parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 
 <body>
+
     <!-- Glass Navigation Bar -->
     <nav class="glass-nav">
         <div class="nav-left">Randall Yuan</div>
@@ -17,17 +21,75 @@
         </div>
     </nav>
 
-    <!-- Hero Intro Section -->
+    <!-- Hero Section -->
     <header class="hero">
-        <h1 id="intro-title">Loading...</h1>
-        <p id="intro-text">...</p>
+        <div class="hero-inner">
+
+            <!-- 头像 -->
+            <div class="hero-left">
+                <img id="avatar" src="static/assets/img/photo.png" alt="Avatar">
+            </div>
+
+            <!-- 文本 -->
+            <div class="hero-right">
+                <h1 id="intro-title">Yuan Wutong / 袁梧桐</h1>
+                <p id="intro-text">
+                    Robotics · Embedded Systems · Flexible Sensors  
+                    电子科学与技术（三年级本科生）
+                </p>
+
+                <div class="hero-meta">
+                    <span>📧 youremail@example.com</span>
+                    <span>📍 Tianjin, China</span>
+                </div>
+
+                <div class="hero-actions">
+                    <button class="btn" onclick="scrollToSection('about')">About</button>
+                    <button class="btn" onclick="scrollToSection('projects')">Projects</button>
+                </div>
+            </div>
+
+        </div>
     </header>
 
-    <!-- Projects Section -->
-    <section class="projects-section">
-        <h2 class="section-title" data-en="Projects" data-zh="项目">Projects</h2>
+    <!-- About Section -->
+    <section id="about" class="card section">
+        <h2 class="section-title">About / 关于我</h2>
+        <div id="about-md" class="md-body card"></div>
+    </section>
+
+    <!-- Papers Section -->
+    <section id="papers" class="card section">
+        <h2 class="section-title">Papers / 论文</h2>
+        <div id="papers-md" class="md-body card"></div>
+    </section>
+
+    <!-- Awards -->
+    <section id="awards" class="card section">
+        <h2 class="section-title">Awards / 荣誉</h2>
+        <div id="awards-md" class="md-body card"></div>
+    </section>
+
+    <!-- Future Plans -->
+    <section id="future" class="card section">
+        <h2 class="section-title">Future Plans / 未来计划</h2>
+        <div id="future-md" class="md-body card"></div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="projects-section">
+        <h2 class="section-title">Projects / 项目</h2>
         <div id="project-list" class="project-list"></div>
     </section>
+
+    <!-- Modal: Project Detail -->
+    <div id="project-modal" class="modal" style="display:none;">
+        <div class="modal-backdrop" onclick="closeModal()"></div>
+        <div class="modal-content card">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div id="project-detail-md" class="md-body"></div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
