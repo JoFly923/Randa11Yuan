@@ -5,117 +5,144 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Yuan Wutong – Robotics & Flexible Sensors</title>
 
-  <!-- styles -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 
   <!-- markdown parser -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
+  <!-- 背景 3D 粒子画布 -->
+  <canvas id="bg-canvas"></canvas>
 
-  <!-- NAV -->
-  <nav class="glass-nav">
-    <div class="nav-left">Yuan Wutong</div>
+  <!-- 顶部导航 -->
+  <nav class="nav">
+    <div class="nav-left">
+      <span class="nav-logo-dot"></span>
+      <span class="nav-name">Yuan Wutong</span>
+      <span class="nav-pill">Robotics & Flexible Sensors</span>
+    </div>
     <div class="nav-right">
-      <button class="lang-btn" data-lang="en">EN</button>
-      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="nav-link" data-target="about">About</button>
+      <button class="nav-link" data-target="projects">Projects</button>
+      <button class="nav-link" data-target="papers">Papers</button>
+      <button class="nav-lang">EN</button>
     </div>
   </nav>
 
-  <!-- HERO -->
+  <!-- Hero 区 -->
   <header class="hero" id="hero">
-    <div class="hero-bg-orbit"></div>
     <div class="hero-inner">
       <div class="hero-left">
-        <div class="avatar-frame">
-          <img id="avatar" src="static/assets/img/photo.png" alt="avatar">
-        </div>
-      </div>
-      <div class="hero-right">
-        <p class="hero-kicker">Robotics · Embedded Systems · Flexible Sensors</p>
+        <p class="hero-kicker">ROBOTICS · EMBEDDED · FLEXIBLE SENSORS</p>
         <h1 class="hero-title">
           <span id="typewriter"></span><span class="cursor">|</span>
         </h1>
-        <p id="hero-sub" class="hero-sub">
-          Building robots, sensing fabrics, and embedded systems that actually work.
+        <p class="hero-sub">
+          Building quiet, precise robots and intelligent sensing fabrics.
         </p>
         <div class="hero-actions">
           <button class="btn primary" data-target="projects">View Projects</button>
           <button class="btn ghost" data-target="about">About Me</button>
         </div>
-        <div class="hero-scroll-hint">
-          <span class="dot"></span>
+        <div class="hero-scroll">
+          <div class="scroll-mouse">
+            <div class="scroll-dot"></div>
+          </div>
           <span>Scroll to explore</span>
         </div>
       </div>
-      <div class="hero-visual" id="hero-visual">
-        <canvas id="hero-canvas"></canvas>
-        <div class="hero-orbit-label">
-          <span>Robotics Developer</span>
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="hero-card-inner">
+            <img src="static/assets/img/photo.png" alt="avatar" class="hero-avatar" />
+            <div class="hero-chip">Robotics Developer</div>
+          </div>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- MAIN SECTIONS -->
+  <!-- 主内容 -->
   <main>
+    <!-- About -->
     <section id="about" class="section">
       <div class="section-header">
-        <span class="section-tag">01</span>
-        <h2 class="section-heading">About / 关于</h2>
+        <span class="section-index">01</span>
+        <h2 class="section-title">About</h2>
       </div>
-      <div class="card md-body" id="about-md"></div>
+      <div class="section-grid">
+        <div class="section-side-label">Profile</div>
+        <article class="card md-body" id="about-md"></article>
+      </div>
     </section>
 
+    <!-- Projects -->
     <section id="projects" class="section">
       <div class="section-header">
-        <span class="section-tag">02</span>
-        <h2 class="section-heading">Projects / 项目</h2>
+        <span class="section-index">02</span>
+        <h2 class="section-title">Projects</h2>
       </div>
-      <div class="projects-rail-wrapper">
-        <div id="project-list" class="project-list rail"></div>
+      <div class="section-grid">
+        <div class="section-side-label">Selected Work</div>
+        <div class="projects-wrapper">
+          <div id="project-list" class="projects-rail"></div>
+          <p class="projects-hint">Drag / scroll horizontally to browse · 横向滑动查看更多项目</p>
+        </div>
       </div>
-      <p class="projects-hint">Drag / scroll sideways · 侧向滑动查看更多项目</p>
     </section>
 
+    <!-- Papers -->
     <section id="papers" class="section">
       <div class="section-header">
-        <span class="section-tag">03</span>
-        <h2 class="section-heading">Papers / 论文</h2>
+        <span class="section-index">03</span>
+        <h2 class="section-title">Papers</h2>
       </div>
-      <div class="card md-body" id="papers-md"></div>
+      <div class="section-grid">
+        <div class="section-side-label">Research</div>
+        <article class="card md-body" id="papers-md"></article>
+      </div>
     </section>
 
+    <!-- Awards -->
     <section id="awards" class="section">
       <div class="section-header">
-        <span class="section-tag">04</span>
-        <h2 class="section-heading">Awards / 荣誉</h2>
+        <span class="section-index">04</span>
+        <h2 class="section-title">Awards</h2>
       </div>
-      <div class="card md-body" id="awards-md"></div>
+      <div class="section-grid">
+        <div class="section-side-label">Recognition</div>
+        <article class="card md-body" id="awards-md"></article>
+      </div>
     </section>
 
+    <!-- Future -->
     <section id="future" class="section">
       <div class="section-header">
-        <span class="section-tag">05</span>
-        <h2 class="section-heading">Future / 未来计划</h2>
+        <span class="section-index">05</span>
+        <h2 class="section-title">Future</h2>
       </div>
-      <div class="card md-body" id="future-md"></div>
+      <div class="section-grid">
+        <div class="section-side-label">Next</div>
+        <article class="card md-body" id="future-md"></article>
+      </div>
     </section>
   </main>
 
-  <!-- PROJECT MODAL -->
+  <!-- 项目详情 Modal -->
   <div id="project-modal" class="modal" aria-hidden="true" style="display:none;">
     <div class="modal-backdrop" onclick="closeModal()"></div>
-    <div class="modal-content card" role="dialog" aria-modal="true">
-      <button class="modal-close" onclick="closeModal()">✕</button>
-      <div class="modal-meta">
-        <div class="modal-pill">Project Detail</div>
+    <div class="modal-shell">
+      <div class="modal-card">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div class="modal-header">
+          <span class="modal-pill">Project Detail</span>
+        </div>
+        <article id="project-detail-md" class="md-body project-md"></article>
       </div>
-      <div id="project-detail-md" class="md-body project-md"></div>
     </div>
   </div>
 
-  <!-- scripts：改成 module，方便用 Motion -->
+  <!-- 主脚本（模块） -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
