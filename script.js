@@ -283,3 +283,29 @@ window.addEventListener('load', ()=>{
   heroIntro();
   initBackground();
 });
+
+/* ---------- Mobile Menu Logic ---------- */
+const menuBtn = document.getElementById('menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+const menuClose = document.getElementById('menu-close');
+
+menuBtn.addEventListener('click', ()=>{
+  mobileMenu.classList.add('open');
+  animate('.mobile-menu', { x:["-100%", "0%"], opacity:[0,1] }, { duration:0.35 });
+});
+
+menuClose.addEventListener('click', ()=>{
+  animate('.mobile-menu', { x:["0%", "-100%"], opacity:[1,0] }, { duration:0.30 })
+    .finished.then(()=> mobileMenu.classList.remove('open'));
+});
+
+/* 点击菜单项后关闭抽屉并切换视图 */
+document.querySelectorAll('.mobile-menu-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    const view = item.dataset.view;
+    switchView(view);
+
+    animate('.mobile-menu', { x:["0%", "-100%"], opacity:[1,0] }, { duration:0.30 })
+      .finished.then(()=> mobileMenu.classList.remove('open'));
+  });
+});
