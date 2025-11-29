@@ -262,31 +262,48 @@ const mobileMenu     = document.getElementById('mobile-menu');
 const mobileMenuInner= document.querySelector('.mobile-menu-inner');
 const menuClose      = document.getElementById('menu-close');
 
+/* ---------- Drawer Menu Animations ---------- */
+
 function openDrawer(){
   if(!mobileMenu || !mobileMenuInner) return;
+
   mobileMenu.classList.add('open');
 
-  // 白色面板滑入
+  // 面板滑入
   animate(mobileMenuInner,
     { x:["-100%","0%"] },
-    { duration:0.35, easing:'ease-out' }
+    { duration:0.45, easing:"cubic-bezier(.16,1.4,.3,1)" } // 🪀 弹簧感
   );
 
-  // 菜单项阶梯式滑入
-  animate('.mobile-menu-item',
-    { opacity:[0,1], x:[-16,0] },
-    { delay:stagger(0.06,{ start:0.10 }), duration:0.35, easing:'ease-out' }
-  );
+  // 阶梯式菜单项动画
+  const items = document.querySelectorAll('.mobile-menu-item');
+  items.forEach((item, i)=>{
+    animate(item,
+      {
+        opacity:[0,1],
+        x:[-40, 0],
+        scale:[0.92, 1]
+      },
+      {
+        duration:0.45,
+        delay:0.08 + i * 0.07,
+        easing:"cubic-bezier(.16,1.4,.3,1)"
+      }
+    );
+  });
 }
+
 function closeDrawer(){
   if(!mobileMenu || !mobileMenuInner) return;
+
   animate(mobileMenuInner,
     { x:["0%","-100%"] },
-    { duration:0.28, easing:'ease-in' }
+    { duration:0.32, easing:"cubic-bezier(.45,0,.75,.18)" }
   ).finished.then(()=>{
     mobileMenu.classList.remove('open');
   });
 }
+
 
 if(menuBtn)   menuBtn.addEventListener('click', openDrawer);
 if(menuClose) menuClose.addEventListener('click', closeDrawer);
