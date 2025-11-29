@@ -334,27 +334,47 @@ function renderProjectCard(direction = 1){
 
   const data = projectData[currentProject];
   const oldCard = flipContainer.querySelector('.project-card-flip');
+
+  // 选择简介：优先当前语言，没有就用另一种，再没有用默认
+  const defaultZh = `这里是 <strong>${data.title}</strong> 的概要卡片，点击可查看完整介绍、图片和视频。`;
+  const defaultEn = `This is a summary card for <strong>${data.title}</strong>. Click to see full details, images, and videos.`;
+  const summary = currentLang === 'en'
+    ? (data.summaryEn || data.summaryZh || defaultEn)
+    : (data.summaryZh || data.summaryEn || defaultZh);
+
+  // 封面图（可选）
+  const imgHtml = data.thumb
+    ? `<div class="project-card-flip-image-wrap">
+         <img src="${data.thumb}" alt="${data.title}" class="project-card-flip-image">
+       </div>`
+    : '';
+
+  const metaText = currentLang === 'en'
+    ? `${data.date || ''} ${data.date ? '· ' : ''}Click to open · view details`
+    : `${data.date || ''} ${data.date ? '· ' : ''}点击打开 · 查看详情`;
+
   const card = document.createElement('article');
   card.className = 'project-card-flip';
   card.innerHTML = `
     <div class="project-card-flip-header">
       <div>
         <div class="project-card-flip-title">${data.title}</div>
-        <div class="project-card-flip-meta">
-          ${data.date ? data.date + " · " : ""}${currentLang === 'en' ? 'Click to open · view details' : '点击打开 · 查看详情'}
-        </div>
+        <div class="project-card-flip-meta">${metaText}</div>
       </div>
       <div class="project-card-flip-index">${String(data.index+1).padStart(2,'0')}</div>
     </div>
+
     <div class="project-card-flip-body">
-      ${currentLang === 'en'
-        ? `This is a summary card for <strong>${data.title}</strong>. Click to see full details, images, and videos.`
-        : `这里是 <strong>${data.title}</strong> 的概要卡片，点击可查看完整介绍、图片和视频。`}
+      ${imgHtml}
+      <div class="project-card-flip-text">
+        ${summary}
+      </div>
     </div>
   `;
   card.addEventListener('click', ()=> openModal('Project', 'projects/'+data.file));
   flipContainer.appendChild(card);
 
+  // 翻页动画
   const fromY = direction > 0 ? 40 : -40;
   animate(card,
     { opacity:[0,1], y:[fromY,0] },
@@ -372,44 +392,6 @@ function renderProjectCard(direction = 1){
   updateCounter();
 }
 
-function initProjectFlip(){
-  currentProject = 0;
-  renderProjectCard(1);
-
-  if(prevBtn){
-    prevBtn.onclick = ()=>{
-      if(!projectData.length) return;
-      currentProject = (currentProject - 1 + projectData.length) % projectData.length;
-      renderProjectCard(-1);
-    };
-  }
-  if(nextBtn){
-    nextBtn.onclick = ()=>{
-      if(!projectData.length) return;
-      currentProject = (currentProject + 1) % projectData.length;
-      renderProjectCard(1);
-    };
-  }
-
-  let wheelLocked = false;
-  if(flipContainer){
-    flipContainer.addEventListener('wheel', e=>{
-      e.preventDefault();
-      if(wheelLocked || !projectData.length) return;
-      wheelLocked = true;
-      if(e.deltaY > 0){
-        currentProject = (currentProject + 1) % projectData.length;
-        renderProjectCard(1);
-      }else{
-        currentProject = (currentProject - 1 + projectData.length) % projectData.length;
-        renderProjectCard(-1);
-      }
-      setTimeout(()=> wheelLocked=false, 500);
-    }, { passive:false });
-  }
-
-  updateCounter();
-}
 
 /* 供时间线跳转用 */
 function jumpToProjectByFile(file){
@@ -455,21 +437,24 @@ async function loadProjects(){
 
   projectData = lines.map((line, i)=>{
     const parts = line.split('|').map(p=>p.trim());
-    const file  = parts[0];
+    const [file, title, date, thumb, summaryZh, summaryEn] = parts;
     const base  = file.replace('.md','').replace(/_/g,' ');
+
     return {
       file,
-      title: parts[1] || base,
-      date:  parts[2] || '',
+      title: title || base,
+      date:  date  || '',
+      thumb: thumb || '',            // 封面图
+      summaryZh: summaryZh || '',    // 中文简介
+      summaryEn: summaryEn || '',    // 英文简介
       index: i
     };
   });
 
   initProjectFlip();
   buildTimeline();
-  applyLanguage(); // 再同步一次文案
+  applyLanguage(); // 同步一次中英文文案
 }
-loadProjects();
 
 /* =========================================================
    Blog 列表

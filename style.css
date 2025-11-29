@@ -399,10 +399,32 @@ body{
   margin-top:4px;
 }
 .project-card-flip-body{
+  display:flex;
+  gap:24px;
+  align-items:flex-start;
+  margin-top:26px;
   font-size:14px;
   color:#4b5563;
-  max-width:580px;
 }
+
+.project-card-flip-image-wrap{
+  flex:0 0 42%;
+}
+
+.project-card-flip-image{
+  width:100%;
+  height:220px;
+  border-radius:20px;
+  object-fit:cover;
+  box-shadow:0 18px 40px rgba(148,163,184,0.55);
+}
+
+.project-card-flip-text{
+  flex:1;
+  max-width:380px;
+  line-height:1.7;
+}
+
 .projects-flip-controls{
   margin-top:12px;
   display:flex;
@@ -514,5 +536,12 @@ body{
   }
   .project-flip{
     height:55vh;
+  }
+  .project-card-flip-body{
+    flex-direction:column;
+    margin-top:18px;
+  }
+  .project-card-flip-image{
+    height:180px;
   }
 }
