@@ -12,13 +12,13 @@ const i18n = {
     navOverview: '概览',
     navProjects: '项目',
     navBlog: '博客',
-    navResearch: '研究',
+    navResearch: '论文与专利',
     heroKicker: '机器人 · 嵌入式 · 柔性传感',
-    heroSub: '专注于安静、高精度的机器人与智能柔性传感织物。',
+    heroSub: '专注于机器人学习与智能柔性传感器探索。',
     heroBtnProjects: '查看项目',
     heroBtnBlog: '阅读博客',
     secAbout: '关于我',
-    secTimeline: '时间线',
+    secTimeline: '项目时间线（点击可跳转）',
     secAwards: '奖项',
     secProjects: '项目',
     secBlog: '博客',
@@ -66,8 +66,8 @@ const i18n = {
 
 // Hero 打字机两套文案
 const typePhrases = {
-  zh: ['袁梧桐', '机器人开发者', '嵌入式控制工程', '柔性传感探索者'],
-  en: ['Yuan Wutong', 'Robotics Developer', 'Embedded Control Engineer', 'Flexible Sensor Explorer'],
+  zh: ['袁梧桐', '机器人开发者', '嵌入式控制工程', '柔性传感探索'],
+  en: ['Wutong Yuan', 'Robotics Developer', 'Embedded Control Engineer', 'Flexible Sensor Explorer'],
 };
 
 function hasChinese(text) {
