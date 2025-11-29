@@ -13,25 +13,48 @@
   <!-- 背景粒子 -->
   <canvas id="bg-canvas"></canvas>
 
-  <!-- 顶部导航 + 视图菜单 -->
-  <nav class="app-nav">
-    <div class="nav-left">
-      <span class="nav-logo-dot"></span>
-      <span class="nav-name">Yuan Wutong</span>
-      <span class="nav-pill">ROBOTICS & FLEXIBLE SENSORS</span>
+<!-- 顶部导航 + 视图菜单 -->
+<nav class="app-nav">
+  <div class="nav-left">
+    <span class="nav-logo-dot"></span>
+    <span class="nav-name">Yuan Wutong</span>
+    <span class="nav-pill">ROBOTICS & FLEXIBLE SENSORS</span>
+  </div>
+
+  <!-- PC 中间标签 -->
+  <div class="nav-center">
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-view="overview">Overview</button>
+      <button class="nav-tab" data-view="projects">Projects</button>
+      <button class="nav-tab" data-view="blog">Blog</button>
+      <button class="nav-tab" data-view="research">Research</button>
     </div>
-    <div class="nav-center">
-      <div class="nav-tabs">
-        <button class="nav-tab active" data-view="overview">Overview</button>
-        <button class="nav-tab" data-view="projects">Projects</button>
-        <button class="nav-tab" data-view="blog">Blog</button>
-        <button class="nav-tab" data-view="research">Research</button>
-      </div>
-    </div>
-    <div class="nav-right">
-      <button class="nav-lang">EN</button>
-    </div>
-  </nav>
+  </div>
+
+  <div class="nav-right">
+    <button class="nav-lang">EN</button>
+
+    <!-- 移动端菜单按钮 -->
+    <button id="menu-btn" class="menu-btn">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- 移动端抽屉菜单 -->
+<div id="mobile-menu" class="mobile-menu">
+  <div class="mobile-menu-inner">
+
+    <button id="menu-close" class="menu-close">✕</button>
+
+    <button class="mobile-menu-item" data-view="overview">Overview</button>
+    <button class="mobile-menu-item" data-view="projects">Projects</button>
+    <button class="mobile-menu-item" data-view="blog">Blog</button>
+    <button class="mobile-menu-item" data-view="research">Research</button>
+
+  </div>
+</div>
+
 
   <!-- 视图容器 -->
   <main class="view-shell">
