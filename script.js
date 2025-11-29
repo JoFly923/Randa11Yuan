@@ -284,28 +284,54 @@ window.addEventListener('load', ()=>{
   initBackground();
 });
 
-/* ---------- Mobile Menu Logic ---------- */
+/* ---------- Mobile / Desktop Drawer Menu Logic ---------- */
 const menuBtn = document.getElementById('menu-btn');
 const mobileMenu = document.getElementById('mobile-menu');
+const mobileMenuInner = document.querySelector('.mobile-menu-inner');
 const menuClose = document.getElementById('menu-close');
 
-menuBtn.addEventListener('click', ()=>{
+function openDrawer(){
+  if(!mobileMenu || !mobileMenuInner) return;
   mobileMenu.classList.add('open');
-  animate('.mobile-menu', { x:["-100%", "0%"], opacity:[0,1] }, { duration:0.35 });
-});
 
-menuClose.addEventListener('click', ()=>{
-  animate('.mobile-menu', { x:["0%", "-100%"], opacity:[1,0] }, { duration:0.30 })
-    .finished.then(()=> mobileMenu.classList.remove('open'));
-});
+  // 白色面板滑入
+  animate(mobileMenuInner,
+    { x:["-100%","0%"] },
+    { duration:0.35, easing:'ease-out' }
+  );
 
-/* 点击菜单项后关闭抽屉并切换视图 */
+  // 菜单项阶梯式滑入
+  animate('.mobile-menu-item',
+    { opacity:[0,1], x:[-16,0] },
+    { delay:stagger(0.06,{ start:0.10 }), duration:0.35, easing:'ease-out' }
+  );
+}
+
+function closeDrawer(){
+  if(!mobileMenu || !mobileMenuInner) return;
+
+  // 先把面板滑回去，再关 overlay
+  animate(mobileMenuInner,
+    { x:["0%","-100%"] },
+    { duration:0.28, easing:'ease-in' }
+  ).finished.then(()=>{
+    mobileMenu.classList.remove('open');
+  });
+}
+
+if(menuBtn){
+  menuBtn.addEventListener('click', openDrawer);
+}
+if(menuClose){
+  menuClose.addEventListener('click', closeDrawer);
+}
+
+// 点击菜单项：切换视图 + 关闭抽屉
 document.querySelectorAll('.mobile-menu-item').forEach(item=>{
   item.addEventListener('click', ()=>{
     const view = item.dataset.view;
-    switchView(view);
-
-    animate('.mobile-menu', { x:["0%", "-100%"], opacity:[1,0] }, { duration:0.30 })
-      .finished.then(()=> mobileMenu.classList.remove('open'));
+    if(view) switchView(view);
+    closeDrawer();
   });
 });
+
