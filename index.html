@@ -13,7 +13,7 @@
   <!-- 背景粒子 -->
   <canvas id="bg-canvas"></canvas>
 
-  <!-- 顶部导航 + 视图菜单 -->
+  <!-- 顶部导航 -->
   <nav class="app-nav">
     <div class="nav-left">
       <span class="nav-logo-dot"></span>
@@ -32,9 +32,10 @@
     </div>
 
     <div class="nav-right">
-      <button class="nav-lang">EN</button>
+      <!-- 语言切换按钮：中 / EN -->
+      <button class="nav-lang">中</button>
 
-      <!-- 菜单按钮：PC + Mobile 都可用 -->
+      <!-- 菜单按钮 -->
       <button id="menu-btn" class="menu-btn">
         <span></span><span></span><span></span>
       </button>
@@ -53,23 +54,24 @@
     </div>
   </div>
 
-  <!-- 视图容器 -->
+  <!-- 主视图容器 -->
   <main class="view-shell">
+
     <!-- View 1: Overview -->
     <section id="view-overview" class="view active">
       <header class="hero" id="hero">
         <div class="hero-inner">
           <div class="hero-left">
-            <p class="hero-kicker">ROBOTICS · EMBEDDED · FLEXIBLE SENSORS</p>
+            <p class="hero-kicker">机器人 · 嵌入式 · 柔性传感</p>
             <h1 class="hero-title">
               <span id="typewriter"></span><span class="cursor">|</span>
             </h1>
             <p class="hero-sub">
-              Building quiet, precise robots and intelligent sensing fabrics.
+              专注于安静、高精度的机器人与智能柔性传感织物。
             </p>
             <div class="hero-actions">
-              <button class="btn primary" data-switch="projects">View Projects</button>
-              <button class="btn ghost" data-switch="blog">Read Blog</button>
+              <button class="btn primary" data-switch="projects">查看项目</button>
+              <button class="btn ghost" data-switch="blog">阅读博客</button>
             </div>
           </div>
           <div class="hero-right">
@@ -87,10 +89,10 @@
       <section class="section">
         <div class="section-header">
           <span class="section-index">01</span>
-          <h2 class="section-title">About</h2>
+          <h2 class="section-title">关于我</h2>
         </div>
         <div class="section-grid">
-          <div class="section-side-label">Profile</div>
+          <div class="section-side-label">个人简介</div>
           <article class="card md-body" id="about-md"></article>
         </div>
       </section>
@@ -99,10 +101,10 @@
       <section class="section">
         <div class="section-header">
           <span class="section-index">02</span>
-          <h2 class="section-title">Timeline</h2>
+          <h2 class="section-title">时间线</h2>
         </div>
         <div class="section-grid">
-          <div class="section-side-label">Journey</div>
+          <div class="section-side-label">成长轨迹</div>
           <div class="timeline-wrapper">
             <div id="timeline" class="timeline"></div>
           </div>
@@ -115,18 +117,18 @@
       <section class="section section-first">
         <div class="section-header">
           <span class="section-index">03</span>
-          <h2 class="section-title">Projects</h2>
+          <h2 class="section-title">项目</h2>
         </div>
         <div class="section-grid">
-          <div class="section-side-label">Selected work</div>
+          <div class="section-side-label">代表作品</div>
           <div class="projects-flip-wrapper">
             <div id="project-flip" class="project-flip"></div>
             <div class="projects-flip-controls">
-              <button id="prev-project" class="flip-btn">Prev</button>
+              <button id="prev-project" class="flip-btn">上一项</button>
               <span id="project-counter" class="flip-counter">1 / 1</span>
-              <button id="next-project" class="flip-btn">Next</button>
+              <button id="next-project" class="flip-btn">下一项</button>
             </div>
-            <p class="projects-hint">Scroll / swipe or use buttons to flip · 滚动/点击切换不同项目</p>
+            <p class="projects-hint">滚动或点击按钮翻页 · 浏览不同项目</p>
           </div>
         </div>
       </section>
@@ -137,13 +139,13 @@
       <section class="section section-first">
         <div class="section-header">
           <span class="section-index">04</span>
-          <h2 class="section-title">Blog</h2>
+          <h2 class="section-title">博客</h2>
         </div>
         <div class="section-grid">
-          <div class="section-side-label">Stories</div>
+          <div class="section-side-label">记录</div>
           <div class="blog-wrapper">
             <div id="blog-list" class="blog-list"></div>
-            <p class="blog-hint">Writing about robots, sensors, and side projects.</p>
+            <p class="blog-hint">记录机器人、传感器与日常折腾。</p>
           </div>
         </div>
       </section>
@@ -154,24 +156,24 @@
       <section class="section section-first">
         <div class="section-header">
           <span class="section-index">05</span>
-          <h2 class="section-title">Research & Path</h2>
+          <h2 class="section-title">研究与规划</h2>
         </div>
         <div class="section-grid">
-          <div class="section-side-label">Papers</div>
+          <div class="section-side-label">论文</div>
           <article class="card md-body" id="papers-md"></article>
         </div>
       </section>
 
       <section class="section">
         <div class="section-grid">
-          <div class="section-side-label">Awards</div>
+          <div class="section-side-label">奖项</div>
           <article class="card md-body" id="awards-md"></article>
         </div>
       </section>
 
       <section class="section">
         <div class="section-grid">
-          <div class="section-side-label">Future</div>
+          <div class="section-side-label">未来计划</div>
           <article class="card md-body" id="future-md"></article>
         </div>
       </section>

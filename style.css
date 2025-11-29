@@ -86,7 +86,7 @@ body{
   border-radius:2px;
 }
 
-/* ---------- Drawer Menu (glass, same-width items) ---------- */
+/* ---------- Drawer Menu (glass) ---------- */
 .mobile-menu{
   position:fixed;
   inset:0;
@@ -124,7 +124,7 @@ body{
   border-right:1px solid rgba(255,255,255,0.25);
 }
 
-/* X 在右上角 */
+/* 抽屉里的关闭按钮 */
 .menu-close{
   border:none;
   background:transparent;
@@ -135,7 +135,7 @@ body{
   align-self:flex-end;
 }
 
-/* 菜单项等宽 */
+/* 抽屉里的菜单项 */
 .mobile-menu-item{
   width:100%;
   padding:12px 16px;
@@ -155,7 +155,7 @@ body{
   transform:translateX(-45px);
 }
 
-/* 悬停放大（仅桌面） */
+/* 悬停放大（桌面） */
 @media (min-width:901px){
   .mobile-menu-item:hover{
     background:rgba(255,255,255,0.25);
@@ -406,11 +406,9 @@ body{
   font-size:14px;
   color:#4b5563;
 }
-
 .project-card-flip-image-wrap{
   flex:0 0 42%;
 }
-
 .project-card-flip-image{
   width:100%;
   height:220px;
@@ -418,13 +416,11 @@ body{
   object-fit:cover;
   box-shadow:0 18px 40px rgba(148,163,184,0.55);
 }
-
 .project-card-flip-text{
   flex:1;
   max-width:380px;
   line-height:1.7;
 }
-
 .projects-flip-controls{
   margin-top:12px;
   display:flex;

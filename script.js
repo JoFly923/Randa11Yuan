@@ -15,7 +15,7 @@ const i18n = {
     navBlog: '博客',
     navResearch: '研究',
     heroKicker: '机器人 · 嵌入式 · 柔性传感',
-    heroSub: '专注于机器人工程与智能柔性传感织物的探索。',
+    heroSub: '专注于安静、高精度的机器人与智能柔性传感织物。',
     heroBtnProjects: '查看项目',
     heroBtnBlog: '阅读博客',
     secAbout: '关于我',
@@ -41,7 +41,7 @@ const i18n = {
     navBlog: 'Blog',
     navResearch: 'Research',
     heroKicker: 'ROBOTICS · EMBEDDED · FLEXIBLE SENSORS',
-    heroSub: 'Building  precise robots and intelligent sensing fabrics.',
+    heroSub: 'Building quiet, precise robots and intelligent sensing fabrics.',
     heroBtnProjects: 'View Projects',
     heroBtnBlog: 'Read Blog',
     secAbout: 'About',
@@ -66,7 +66,7 @@ const i18n = {
 // Hero 打字机两套文案
 const typePhrases = {
   zh: ['袁梧桐', '机器人开发者', '嵌入式控制工程', '柔性传感探索者'],
-  en: ['Wutong Yuan', 'Robotics Developer', 'Embedded Control Engineer', 'Flexible Sensor Explorer'],
+  en: ['Yuan Wutong', 'Robotics Developer', 'Embedded Control Engineer', 'Flexible Sensor Explorer'],
 };
 
 function hasChinese(text) {
@@ -103,9 +103,8 @@ function structureBilingual(container) {
   }
 }
 
-// 按容器粒度切换语言：如果某个容器里没有英文，就在 EN 模式下也显示中文
+/** 按容器粒度切语言：没有英文时 EN 也显示中文 */
 function applyLanguageDom() {
-  // 所有 Markdown 区域 + Modal 内容区域
   const containers = document.querySelectorAll('.md-body, #modal-md');
 
   containers.forEach(container => {
@@ -114,11 +113,9 @@ function applyLanguageDom() {
     const hasEn = enEls.length > 0;
 
     if (currentLang === 'en' && hasEn) {
-      // 这个区域有英文 → 英文模式只显示英文
       zhEls.forEach(el => (el.style.display = 'none'));
       enEls.forEach(el => (el.style.display = ''));
     } else {
-      // 中文模式，或者根本没有英文 → 全部都显示
       zhEls.forEach(el => (el.style.display = ''));
       enEls.forEach(el => (el.style.display = ''));
     }
@@ -272,7 +269,7 @@ function typeTick(){
 }
 
 /* =========================================================
-   加载静态 sections（About / Papers / Awards / Future）
+   Markdown 加载
    ========================================================= */
 
 async function loadMarkdown(path){
@@ -308,7 +305,7 @@ async function loadStaticSections(){
     structureBilingual(futureEl);
   }
 
-  applyLanguage(); // 初始按当前语言应用
+  applyLanguage();
 }
 loadStaticSections();
 
@@ -316,7 +313,7 @@ loadStaticSections();
    项目数据 & 翻页机
    ========================================================= */
 
-let projectData = [];   // { file, title, date, index }
+let projectData = [];   // { file, title, date, thumb, summaryZh, summaryEn, index }
 let currentProject = 0;
 
 const flipContainer = document.getElementById('project-flip');
@@ -335,14 +332,12 @@ function renderProjectCard(direction = 1){
   const data = projectData[currentProject];
   const oldCard = flipContainer.querySelector('.project-card-flip');
 
-  // 选择简介：优先当前语言，没有就用另一种，再没有用默认
   const defaultZh = `这里是 <strong>${data.title}</strong> 的概要卡片，点击可查看完整介绍、图片和视频。`;
   const defaultEn = `This is a summary card for <strong>${data.title}</strong>. Click to see full details, images, and videos.`;
   const summary = currentLang === 'en'
     ? (data.summaryEn || data.summaryZh || defaultEn)
     : (data.summaryZh || data.summaryEn || defaultZh);
 
-  // 封面图（可选）
   const imgHtml = data.thumb
     ? `<div class="project-card-flip-image-wrap">
          <img src="${data.thumb}" alt="${data.title}" class="project-card-flip-image">
@@ -374,7 +369,6 @@ function renderProjectCard(direction = 1){
   card.addEventListener('click', ()=> openModal('Project', 'projects/'+data.file));
   flipContainer.appendChild(card);
 
-  // 翻页动画
   const fromY = direction > 0 ? 40 : -40;
   animate(card,
     { opacity:[0,1], y:[fromY,0] },
@@ -392,6 +386,44 @@ function renderProjectCard(direction = 1){
   updateCounter();
 }
 
+function initProjectFlip(){
+  currentProject = 0;
+  renderProjectCard(1);
+
+  if(prevBtn){
+    prevBtn.onclick = ()=>{
+      if(!projectData.length) return;
+      currentProject = (currentProject - 1 + projectData.length) % projectData.length;
+      renderProjectCard(-1);
+    };
+  }
+  if(nextBtn){
+    nextBtn.onclick = ()=>{
+      if(!projectData.length) return;
+      currentProject = (currentProject + 1) % projectData.length;
+      renderProjectCard(1);
+    };
+  }
+
+  let wheelLocked = false;
+  if(flipContainer){
+    flipContainer.addEventListener('wheel', e=>{
+      e.preventDefault();
+      if(wheelLocked || !projectData.length) return;
+      wheelLocked = true;
+      if(e.deltaY > 0){
+        currentProject = (currentProject + 1) % projectData.length;
+        renderProjectCard(1);
+      }else{
+        currentProject = (currentProject - 1 + projectData.length) % projectData.length;
+        renderProjectCard(-1);
+      }
+      setTimeout(()=> wheelLocked=false, 500);
+    }, { passive:false });
+  }
+
+  updateCounter();
+}
 
 /* 供时间线跳转用 */
 function jumpToProjectByFile(file){
@@ -402,7 +434,7 @@ function jumpToProjectByFile(file){
   renderProjectCard(1);
 }
 
-/* ---------- 加载项目列表 & 时间线 ---------- */
+/* ---------- 时间线 ---------- */
 
 const timelineEl = document.getElementById('timeline');
 
@@ -431,30 +463,40 @@ function buildTimeline(){
   }, { amount:0.5 });
 }
 
+/* ---------- 加载项目列表 ---------- */
+
 async function loadProjects(){
   const raw = await loadMarkdown('projects/list.txt');
   const lines = raw.split('\n').map(s=>s.trim()).filter(Boolean);
 
   projectData = lines.map((line, i)=>{
     const parts = line.split('|').map(p=>p.trim());
-    const [file, title, date, thumb, summaryZh, summaryEn] = parts;
+    const file  = parts[0];
     const base  = file.replace('.md','').replace(/_/g,' ');
+    const title = parts[1] || base;
+    const date  = parts[2] || '';
+    const thumb = parts[3] || '';
+    const summaryZh = parts[4] || '';
+    const summaryEn = parts[5] || '';
 
     return {
       file,
-      title: title || base,
-      date:  date  || '',
-      thumb: thumb || '',            // 封面图
-      summaryZh: summaryZh || '',    // 中文简介
-      summaryEn: summaryEn || '',    // 英文简介
+      title,
+      date,
+      thumb,
+      summaryZh,
+      summaryEn,
       index: i
     };
   });
 
-  initProjectFlip();
-  buildTimeline();
-  applyLanguage(); // 同步一次中英文文案
+  if (projectData.length) {
+    initProjectFlip();
+    buildTimeline();
+  }
+  applyLanguage(); // 同步一次文案
 }
+loadProjects();
 
 /* =========================================================
    Blog 列表
@@ -503,7 +545,7 @@ async function loadBlog(){
 loadBlog();
 
 /* =========================================================
-   Modal（项目 + 博客详情）
+   Modal
    ========================================================= */
 
 const modal     = document.getElementById('content-modal');
@@ -515,7 +557,6 @@ async function openModal(tag, path){
   modal.style.display = 'block';
   document.body.style.overflow = 'hidden';
 
-  // 标签文字跟语言
   if(tag === 'Project'){
     modalTag.textContent = currentLang === 'en' ? 'Project' : '项目';
   }else if(tag === 'Blog'){
@@ -527,7 +568,7 @@ async function openModal(tag, path){
   const md = await loadMarkdown(path);
   modalBody.innerHTML = marked.parse(md);
   structureBilingual(modalBody);
-  applyLanguageDom(); // 只需要切显示/隐藏，固定文案已由 applyLanguage 控制
+  applyLanguageDom();
 
   animate('.modal-card',
     { opacity:[0,1], y:[28,0] },
@@ -616,7 +657,7 @@ function initBackground(){
 }
 
 /* =========================================================
-   抽屉菜单（PC + Mobile）
+   抽屉菜单
    ========================================================= */
 
 const menuBtn        = document.getElementById('menu-btn');
