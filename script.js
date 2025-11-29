@@ -15,7 +15,7 @@ const i18n = {
     navBlog: '博客',
     navResearch: '研究',
     heroKicker: '机器人 · 嵌入式 · 柔性传感',
-    heroSub: '专注于安静、高精度的机器人与智能柔性传感织物。',
+    heroSub: '专注于机器人工程与智能柔性传感织物的探索。',
     heroBtnProjects: '查看项目',
     heroBtnBlog: '阅读博客',
     secAbout: '关于我',
@@ -41,7 +41,7 @@ const i18n = {
     navBlog: 'Blog',
     navResearch: 'Research',
     heroKicker: 'ROBOTICS · EMBEDDED · FLEXIBLE SENSORS',
-    heroSub: 'Building quiet, precise robots and intelligent sensing fabrics.',
+    heroSub: 'Building  precise robots and intelligent sensing fabrics.',
     heroBtnProjects: 'View Projects',
     heroBtnBlog: 'Read Blog',
     secAbout: 'About',
@@ -66,7 +66,7 @@ const i18n = {
 // Hero 打字机两套文案
 const typePhrases = {
   zh: ['袁梧桐', '机器人开发者', '嵌入式控制工程', '柔性传感探索者'],
-  en: ['Yuan Wutong', 'Robotics Developer', 'Embedded Control Engineer', 'Flexible Sensor Explorer'],
+  en: ['Wutong Yuan', 'Robotics Developer', 'Embedded Control Engineer', 'Flexible Sensor Explorer'],
 };
 
 function hasChinese(text) {
@@ -103,24 +103,33 @@ function structureBilingual(container) {
   }
 }
 
-/** 只对带 data-lang 的元素做显示/隐藏 */
+// 按容器粒度切换语言：如果某个容器里没有英文，就在 EN 模式下也显示中文
 function applyLanguageDom() {
-  const zhEls = document.querySelectorAll('[data-lang="zh"]');
-  const enEls = document.querySelectorAll('[data-lang="en"]');
+  // 所有 Markdown 区域 + Modal 内容区域
+  const containers = document.querySelectorAll('.md-body, #modal-md');
 
-  if (currentLang === 'en') {
-    zhEls.forEach(el => (el.style.display = 'none'));
-    enEls.forEach(el => (el.style.display = ''));
-  } else {
-    zhEls.forEach(el => (el.style.display = ''));
-    enEls.forEach(el => (el.style.display = ''));
-  }
+  containers.forEach(container => {
+    const zhEls = container.querySelectorAll('[data-lang="zh"]');
+    const enEls = container.querySelectorAll('[data-lang="en"]');
+    const hasEn = enEls.length > 0;
+
+    if (currentLang === 'en' && hasEn) {
+      // 这个区域有英文 → 英文模式只显示英文
+      zhEls.forEach(el => (el.style.display = 'none'));
+      enEls.forEach(el => (el.style.display = ''));
+    } else {
+      // 中文模式，或者根本没有英文 → 全部都显示
+      zhEls.forEach(el => (el.style.display = ''));
+      enEls.forEach(el => (el.style.display = ''));
+    }
+  });
 }
 
 /** 固定文案（导航、标题、按钮等）根据 currentLang 设置 */
 function applyStaticI18n() {
   const t = i18n[currentLang];
 
+  // 顶部 Tab
   const navTabs = document.querySelectorAll('.nav-tab');
   if (navTabs.length >= 4) {
     navTabs[0].textContent = t.navOverview;
@@ -129,6 +138,16 @@ function applyStaticI18n() {
     navTabs[3].textContent = t.navResearch;
   }
 
+  // 抽屉菜单里的四个按钮
+  const mobileItems = document.querySelectorAll('.mobile-menu-item');
+  if (mobileItems.length >= 4) {
+    mobileItems[0].textContent = t.navOverview;
+    mobileItems[1].textContent = t.navProjects;
+    mobileItems[2].textContent = t.navBlog;
+    mobileItems[3].textContent = t.navResearch;
+  }
+
+  // Hero 文案
   const heroKicker = document.querySelector('.hero-kicker');
   if (heroKicker) heroKicker.textContent = t.heroKicker;
 
@@ -141,6 +160,7 @@ function applyStaticI18n() {
     heroBtns[1].textContent = t.heroBtnBlog;
   }
 
+  // Section 标题
   const titles = document.querySelectorAll('.section-title');
   if (titles.length >= 5) {
     titles[0].textContent = t.secAbout;
@@ -150,6 +170,7 @@ function applyStaticI18n() {
     titles[4].textContent = t.secResearch;
   }
 
+  // 左侧小标签
   const labels = document.querySelectorAll('.section-side-label');
   if (labels.length >= 7) {
     labels[0].textContent = t.labelProfile;
@@ -161,6 +182,7 @@ function applyStaticI18n() {
     labels[6].textContent = t.labelFuture;
   }
 
+  // 提示文字 & 翻页按钮
   const projHint = document.querySelector('.projects-hint');
   if (projHint) projHint.textContent = t.projectsHint;
 
