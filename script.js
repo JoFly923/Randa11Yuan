@@ -72,7 +72,7 @@ async function loadProjects(){
   for(const f of files){
     const name = f.replace('.md','').replace(/_/g,' ');
     const card = document.createElement('div');
-    card.className = 'project-card reveal';
+    card.className = 'project-card reveal show';
     card.innerHTML = `<strong>${name}</strong><p style="margin-top:8px;color:#555;font-size:13px">Click to open</p>`;
     card.addEventListener('click', ()=> openProjectModal(f));
     container.appendChild(card);
