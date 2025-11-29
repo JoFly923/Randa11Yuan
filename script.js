@@ -11,7 +11,7 @@ async function loadMarkdown(path){
   }
 }
 
-/* ---------- 视图切换（顶部标签共用） ---------- */
+/* ---------- 视图切换 ---------- */
 const views = document.querySelectorAll('.view');
 const tabs  = document.querySelectorAll('.nav-tab');
 
@@ -25,7 +25,6 @@ function switchView(name){
   });
   window.scrollTo({top:0,behavior:'smooth'});
 
-  // 新视图入场动画
   const activeView = document.getElementById(`view-${name}`);
   if(activeView){
     const firstSection = activeView.querySelector('.section-first') || activeView.querySelector('.section');
@@ -42,7 +41,6 @@ tabs.forEach(tab=>{
   tab.addEventListener('click', ()=> switchView(tab.dataset.view));
 });
 
-// hero 里的按钮直接切视图
 document.querySelectorAll('[data-switch]').forEach(btn=>{
   btn.addEventListener('click', ()=> switchView(btn.dataset.switch));
 });
@@ -83,49 +81,170 @@ async function loadStaticSections(){
 }
 loadStaticSections();
 
-/* ---------- Projects 列表 ---------- */
+/* ---------- 全局项目数据 ---------- */
+let projectData = [];   // { file, title, date, index }
+let currentProject = 0;
+
+/* ---------- Projects: 读取 list + 初始化 ---------- */
 async function loadProjects(){
   const raw = await loadMarkdown('projects/list.txt');
-  const files = raw.split('\n').map(s=>s.trim()).filter(Boolean);
+  const lines = raw.split('\n').map(s=>s.trim()).filter(Boolean);
 
-  const container = document.getElementById('project-list');
-  container.innerHTML = '';
-
-  files.forEach((f,i)=>{
-    const name = f.replace('.md','').replace(/_/g,' ');
-    const idx  = String(i+1).padStart(2,'0');
-
-    const card = document.createElement('article');
-    card.className = 'project-card';
-    card.innerHTML = `
-      <div class="project-index">${idx}</div>
-      <div class="project-meta">
-        <div class="project-title">${name}</div>
-        <p class="project-sub">Click to open · 查看详情</p>
-      </div>
-    `;
-    card.addEventListener('click', ()=> openModal('Project', 'projects/'+f));
-    container.appendChild(card);
+  projectData = lines.map((line, i)=>{
+    const parts = line.split('|').map(p=>p.trim());
+    const file  = parts[0];
+    const base  = file.replace('.md','').replace(/_/g,' ');
+    return {
+      file,
+      title: parts[1] || base,
+      date:  parts[2] || '',
+      index: i
+    };
   });
 
-  inView('#view-projects', ()=>{
-    animate('.project-card',
-      { opacity:[0,1], y:[24,0], scale:[0.96,1] },
-      { duration:0.7, delay:stagger(0.08) }
-    );
-  }, { amount:0.3 });
+  initProjectFlip();
+  buildTimeline();
 }
 loadProjects();
 
-/* ---------- Blog 列表 ---------- */
+/* ---------- Projects: 翻页机 ---------- */
+const flipContainer = document.getElementById('project-flip');
+const prevBtn = document.getElementById('prev-project');
+const nextBtn = document.getElementById('next-project');
+const counter = document.getElementById('project-counter');
+
+function updateCounter(){
+  if(!counter || !projectData.length) return;
+  counter.textContent = `${currentProject+1} / ${projectData.length}`;
+}
+
+function renderProjectCard(direction = 1){
+  if(!flipContainer || !projectData.length) return;
+
+  const data = projectData[currentProject];
+  const oldCard = flipContainer.querySelector('.project-card-flip');
+  const card = document.createElement('article');
+  card.className = 'project-card-flip';
+  card.innerHTML = `
+    <div class="project-card-flip-header">
+      <div>
+        <div class="project-card-flip-title">${data.title}</div>
+        <div class="project-card-flip-meta">
+          ${data.date ? data.date + " · " : ""}Click to open · 查看详情
+        </div>
+      </div>
+      <div class="project-card-flip-index">${String(data.index+1).padStart(2,'0')}</div>
+    </div>
+    <div class="project-card-flip-body">
+      This is a summary card for <strong>${data.title}</strong>.  
+      Click to see full details, images, and videos.
+    </div>
+  `;
+  card.addEventListener('click', ()=> openModal('Project', 'projects/'+data.file));
+  flipContainer.appendChild(card);
+
+  // 新卡片进场动画（翻页风格）
+  const fromY = direction > 0 ? 40 : -40;
+  animate(card,
+    { opacity:[0,1], y:[fromY,0] },
+    { duration:0.45, easing:"cubic-bezier(.16,1.4,.3,1)" }
+  );
+
+  if(oldCard){
+    const toY = direction > 0 ? -40 : 40;
+    animate(oldCard,
+      { opacity:[1,0], y:[0,toY] },
+      { duration:0.3, easing:"ease-in" }
+    ).finished.then(()=> oldCard.remove());
+  }
+
+  updateCounter();
+}
+
+function initProjectFlip(){
+  currentProject = 0;
+  renderProjectCard(1);
+
+  if(prevBtn){
+    prevBtn.onclick = ()=>{
+      if(!projectData.length) return;
+      currentProject = (currentProject - 1 + projectData.length) % projectData.length;
+      renderProjectCard(-1);
+    };
+  }
+  if(nextBtn){
+    nextBtn.onclick = ()=>{
+      if(!projectData.length) return;
+      currentProject = (currentProject + 1) % projectData.length;
+      renderProjectCard(1);
+    };
+  }
+
+  // 滚轮翻页（防止滚太快加锁）
+  let wheelLocked = false;
+  if(flipContainer){
+    flipContainer.addEventListener('wheel', e=>{
+      e.preventDefault();
+      if(wheelLocked || !projectData.length) return;
+      wheelLocked = true;
+      if(e.deltaY > 0){
+        currentProject = (currentProject + 1) % projectData.length;
+        renderProjectCard(1);
+      }else{
+        currentProject = (currentProject - 1 + projectData.length) % projectData.length;
+        renderProjectCard(-1);
+      }
+      setTimeout(()=> wheelLocked=false, 500);
+    }, { passive:false });
+  }
+
+  updateCounter();
+}
+
+/* 供时间线调用：按照文件名跳转到某个项目 */
+function jumpToProjectByFile(file){
+  const idx = projectData.findIndex(p=>p.file === file);
+  if(idx === -1) return;
+  currentProject = idx;
+  switchView('projects');
+  renderProjectCard(1);
+}
+
+/* ---------- 时间线 ---------- */
+const timelineEl = document.getElementById('timeline');
+
+function buildTimeline(){
+  if(!timelineEl) return;
+  timelineEl.innerHTML = '';
+  projectData.forEach(p=>{
+    const item = document.createElement('div');
+    item.className = 'timeline-item';
+    item.innerHTML = `
+      <div class="timeline-dot"></div>
+      <div class="timeline-content">
+        <div class="timeline-title">${p.title}</div>
+        <div class="timeline-meta">${p.date || 'Project'}</div>
+      </div>
+    `;
+    item.addEventListener('click', ()=> jumpToProjectByFile(p.file));
+    timelineEl.appendChild(item);
+  });
+
+  inView('.timeline-item', ({ target })=>{
+    animate(target,
+      { opacity:[0,1], x:[-12,0] },
+      { duration:0.4, easing:'ease-out' }
+    );
+  }, { amount:0.5 });
+}
+
+/* ---------- Blog ---------- */
 /*
-  /blog/list.txt 每行：
-  slug|Title|Tagline
+  /blog/list.txt 每行： slug|Title|Tagline
 */
 async function loadBlog(){
   const raw = await loadMarkdown('blog/list.txt');
   const lines = raw.split('\n').map(s=>s.trim()).filter(Boolean);
-
   const container = document.getElementById('blog-list');
   if(!container) return;
   container.innerHTML = '';
@@ -262,40 +381,31 @@ const mobileMenu     = document.getElementById('mobile-menu');
 const mobileMenuInner= document.querySelector('.mobile-menu-inner');
 const menuClose      = document.getElementById('menu-close');
 
-/* ---------- Drawer Menu Animations ---------- */
-
 function openDrawer(){
   if(!mobileMenu || !mobileMenuInner) return;
-
   mobileMenu.classList.add('open');
 
   // 面板滑入
   animate(mobileMenuInner,
     { x:["-100%","0%"] },
-    { duration:0.45, easing:"cubic-bezier(.16,1.4,.3,1)" } // 🪀 弹簧感
+    { duration:0.45, easing:"cubic-bezier(.16,1.4,.3,1)" }
   );
 
-  // 阶梯式菜单项动画
+  // 菜单项弹簧式出现
   const items = document.querySelectorAll('.mobile-menu-item');
   items.forEach((item, i)=>{
     animate(item,
-      {
-        opacity:[0,1],
-        x:[-40, 0],
-        scale:[0.92, 1]
-      },
+      { opacity:[0,1], x:[-40,0], scale:[0.92,1] },
       {
         duration:0.45,
-        delay:0.08 + i * 0.07,
+        delay:0.08 + i*0.07,
         easing:"cubic-bezier(.16,1.4,.3,1)"
       }
     );
   });
 }
-
 function closeDrawer(){
   if(!mobileMenu || !mobileMenuInner) return;
-
   animate(mobileMenuInner,
     { x:["0%","-100%"] },
     { duration:0.32, easing:"cubic-bezier(.45,0,.75,.18)" }
@@ -303,7 +413,6 @@ function closeDrawer(){
     mobileMenu.classList.remove('open');
   });
 }
-
 
 if(menuBtn)   menuBtn.addEventListener('click', openDrawer);
 if(menuClose) menuClose.addEventListener('click', closeDrawer);
