@@ -1,5 +1,8 @@
-# Biped Robot Project — 双足机器人项目
+# Biped Robot Project
 
-A self-designed bipedal robot focusing on actuator control, balance, IMU fusion, and real-time embedded control.
+A self-designed biped robot with custom actuators and balance control.
 
-本人自主设计的双足机器人项目，包含执行器控制、动态稳定性、IMU 融合、实时嵌入式控制等内容。
+![CAD model](static/assets/img/biped_cad.png)
+
+<video src="static/assets/video/biped_walk.mp4" controls></video>
+
